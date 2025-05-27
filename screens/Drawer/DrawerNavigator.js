@@ -14,31 +14,22 @@ const HomeScreen = () => {
   const navigation = useNavigation();
   const [isDarkMode, setIsDarkMode] = useState(false);
   
-  // Toggle between light and dark mode
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
   };
 
-  // Function to handle card press
   const handleCardPress = (cardTitle) => {
-    // This would navigate to CardsScreen.js with the selected card
-    // navigation.navigate('CardsScreen', { title: cardTitle });
     console.log(`Navigating to ${cardTitle} cards`);
   };
 
-  // Function to handle create card button press
   const handleCreateCard = () => {
-    // This would navigate to CreateCard.js
-    // navigation.navigate('CreateCard');
     console.log('Navigating to create card screen');
   };
 
-  // Function to open drawer
   const openDrawer = () => {
     navigation.openDrawer();
   };
 
-  // Theme colors based on current mode
   const theme = {
     background: isDarkMode ? '#1E1E1E' : '#FFFFFF',
     card: isDarkMode ? '#2A2A2A' : '#F0F0F0',
