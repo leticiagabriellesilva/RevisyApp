@@ -20,7 +20,7 @@ export default function App() {
         onPress2={() => Alert.alert('Ainda nada', 'Aqui vai salvar e resetar os cards')}
         style2={styles.image}
       />
-
+      
       <View style={styles.pickerContainer}>
         <Text style={styles.label}>Baralho</Text>
         <Picker
@@ -33,14 +33,16 @@ export default function App() {
           <Picker.Item label="Banco de Dados" value="Banco de Dados" />
         </Picker>
       </View>
-
-      <View>
-        <CardInput
+      
+      <View style={styles.cardContainer}>
+        <Text style={styles.title}>FRENTE</Text>
+      <CardInput
           title={"Frente"}
           value={pergunta}
           onChangeText={setPergunta}
           placeholder="Digite a pergunta aqui..."
         />
+        <Text style={styles.title}>VERSO</Text>
         <CardInput
           title={"Verso"}
           value={resposta}
@@ -59,11 +61,16 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fafafa'
+    backgroundColor: '#fafafa',
   },
+  progressionBar: {
+    height: 12,
+    backgroundColor: '#4C1C74'
+    },
   pickerContainer: {
     marginTop: 20,
-    marginHorizontal: 20
+    marginHorizontal: 20,
+
   },
   label: {
     fontSize: 16,
@@ -73,28 +80,13 @@ const styles = StyleSheet.create({
     height: 50,
     backgroundColor: '#fff'
   },
-  cardContainer: {
-    marginTop: 30,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  cardInputContainer: {
-    marginVertical: 20,
-    alignItems: 'center'
-  },
+
   title: {
+    width: '100%',
     fontSize: 20,
+    textAlign: 'center',
     fontWeight: 'bold',
-    marginBottom: 10
-  },
-  input: {
-    width: '90%',
-    height: 150,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    padding: 10,
-    textAlignVertical: 'top'
+    margin: (10, 0, 10,0)
   },
   button: {
     marginTop: 20,
@@ -109,7 +101,7 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   image: {
-    width: 30,
-    height: 30,
-  }
+    width: 40,
+    height: 40,
+  },
 });
