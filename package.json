@@ -9,19 +9,24 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/metro-runtime": "~5.0.4",
+    "@react-native-picker/picker": "^2.11.0",
+    "@react-navigation/native": "^7.1.9",
+    "@react-navigation/native-stack": "^7.3.13",
     "expo": "~53.0.7",
     "expo-status-bar": "~2.2.3",
     "react": "19.0.0",
+    "react-dom": "19.0.0",
     "react-native": "0.79.2",
+    "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "^2.25.0",
     "react-native-paper": "^5.14.0",
+    "react-native-picker-dropdown": "^0.1.2",
     "react-native-reanimated": "^3.17.5",
     "react-native-vector-icons": "^10.2.0",
-    "react-navigation": "^5.0.0",
-    "revisy": "file:",
-    "react-dom": "19.0.0",
     "react-native-web": "^0.20.0",
-    "@expo/metro-runtime": "~5.0.4"
+    "react-navigation": "^5.0.0",
+    "revisy": "file:"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

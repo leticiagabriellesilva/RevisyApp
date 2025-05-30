@@ -1,13 +1,18 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import DrawerNavigator from './DrawerNavigator';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View } from 'react-native';
+import CreateCard from './screens/CreateCard/CreateCard';
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <DrawerNavigator />
-    </NavigationContainer>
+    <CreateCard/>
   );
-};
+}
 
-export default App;
+const styles = StyleSheet.create({
+  container: {
+
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

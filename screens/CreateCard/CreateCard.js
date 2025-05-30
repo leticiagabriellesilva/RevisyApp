@@ -1,102 +1,107 @@
-import React, {useState} from 'react';
-import {
-  Button,
-  Platform,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
+import React, { useState, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import TopBar from '../../components/TopBar/TopBar';
+import CardInput from '../../components/CardInput/CardInput';
 
-const STYLES = ['default', 'dark-content', 'light-content'];
-const TRANSITIONS = ['fade', 'slide', 'none'];
+export default function App() {
+  const [baralho, setBaralho] = useState('Redes');
+  const [pergunta, setPergunta] = useState('');
+  const [resposta, setResposta] = useState('');
 
-const App = () => {
-  const [hidden, setHidden] = useState(false);
-  const [statusBarStyle, setStatusBarStyle] = useState(STYLES[0]);
-  const [statusBarTransition, setStatusBarTransition] = useState(
-    TRANSITIONS[0],
-  );
-
-  const changeStatusBarVisibility = () => setHidden(!hidden);
-
-  const changeStatusBarStyle = () => {
-    const styleId = STYLES.indexOf(statusBarStyle) + 1;
-    if (styleId === STYLES.length) {
-      setStatusBarStyle(STYLES[0]);
-    } else {
-      setStatusBarStyle(STYLES[styleId]);
-    }
-  };
-
-  const changeStatusBarTransition = () => {
-    const transition = TRANSITIONS.indexOf(statusBarTransition) + 1;
-    if (transition === TRANSITIONS.length) {
-      setStatusBarTransition(TRANSITIONS[0]);
-    } else {
-      setStatusBarTransition(TRANSITIONS[transition]);
-    }
-  };
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={styles.container}>
-        <StatusBar
-          animated={true}
-          backgroundColor="#61dafb"
-          barStyle={statusBarStyle}
-          showHideTransition={statusBarTransition}
-          hidden={hidden}
+    <View style={styles.container}>
+      <TopBar
+        image1={require('../../assets/backIcon.png')}
+        onPress1={() => Alert.alert('Ainda nada', 'Aqui vai voltar para a tela anterior')}
+        style1={styles.image}
+        image2={require('../../assets/confirmIcon.png')}
+        onPress2={() => Alert.alert('Ainda nada', 'Aqui vai salvar e resetar os cards')}
+        style2={styles.image}
+      />
+      
+      <View style={styles.pickerContainer}>
+        <Text style={styles.label}>Baralho</Text>
+        <Picker
+          selectedValue={baralho}
+          onValueChange={(setBaralho) => setBaralho(setBaralho)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Redes" value="Redes" />
+          <Picker.Item label="Algoritmos" value="Algoritmos" />
+          <Picker.Item label="Banco de Dados" value="Banco de Dados" />
+        </Picker>
+      </View>
+      
+      <View style={styles.cardContainer}>
+        <Text style={styles.title}>FRENTE</Text>
+      <CardInput
+          title={"Frente"}
+          value={pergunta}
+          onChangeText={setPergunta}
+          placeholder="Digite a pergunta aqui..."
         />
-        <Text style={styles.textStyle}>
-          StatusBar Visibility:{'\n'}
-          {hidden ? 'Hidden' : 'Visible'}
-        </Text>
-        <Text style={styles.textStyle}>
-          StatusBar Style:{'\n'}
-          {statusBarStyle}
-        </Text>
-        {Platform.OS === 'ios' ? (
-          <Text style={styles.textStyle}>
-            StatusBar Transition:{'\n'}
-            {statusBarTransition}
-          </Text>
-        ) : null}
-        <View style={styles.buttonsContainer}>
-          <Button
-            title="Toggle StatusBar"
-            onPress={changeStatusBarVisibility}
-          />
-          <Button
-            title="Change StatusBar Style"
-            onPress={changeStatusBarStyle}
-          />
-          {Platform.OS === 'ios' ? (
-            <Button
-              title="Change StatusBar Transition"
-              onPress={changeStatusBarTransition}
-            />
-          ) : null}
-        </View>
-      </SafeAreaView>
-    </SafeAreaProvider>
+        <Text style={styles.title}>VERSO</Text>
+        <CardInput
+          title={"Verso"}
+          value={resposta}
+          onChangeText={setResposta}
+          placeholder="Digite a resposta aqui..."
+        />
+      </View>
+
+      <TouchableOpacity style={styles.button} onPress={() => Alert.alert('Ainda nada', 'Aqui vai salvar e resetar os cards')}>
+        <Text style={styles.buttonText}>Salvar</Text>
+      </TouchableOpacity>
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    backgroundColor: '#ECF0F1',
+    backgroundColor: '#fafafa',
   },
-  buttonsContainer: {
-    padding: 10,
+  progressionBar: {
+    height: 12,
+    backgroundColor: '#4C1C74'
+    },
+  pickerContainer: {
+    marginTop: 20,
+    marginHorizontal: 20,
+
   },
-  textStyle: {
+  label: {
+    fontSize: 16,
+    marginBottom: 5
+  },
+  picker: {
+    height: 50,
+    backgroundColor: '#fff'
+  },
+
+  title: {
+    width: '100%',
+    fontSize: 20,
     textAlign: 'center',
-    marginBottom: 8,
+    fontWeight: 'bold',
+    margin: (10, 0, 10,0)
+  },
+  button: {
+    marginTop: 20,
+    alignSelf: 'center',
+    backgroundColor: '#000',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16
+  },
+  image: {
+    width: 40,
+    height: 40,
   },
 });
-
-export default App;
