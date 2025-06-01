@@ -16,7 +16,7 @@ export default function TopBar({ image1, onPress1, style1, image2, onPress2, sty
           style={style1}
         />
 
-        <Text style={[styles.logo, { color: textColor }]}>Revizy</Text>
+        <Text style={[styles.logo, { color: textColor }]}>Revisy</Text>
 
         <ButtonImage
           image={image2}
