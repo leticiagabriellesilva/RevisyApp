@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import ButtonImage from './ButtonImage';
+import ButtonImage from '../ButtonImage/ButtonImage';
 import { Divider } from 'react-native-paper';
 
 
@@ -14,7 +14,7 @@ export default function TopBar({ image1, onPress1, style1, image2, onPress2, sty
           style={style1}
         />
 
-        <Text style={styles.logo}>Revizy</Text>
+        <Text style={styles.logo}>Revisy</Text>
 
         <ButtonImage
           image={image2}
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   },
   progressionBar: {
     height: 12,
-    backgroundColor: '#4C1C74'
+    backgroundColor: '#96D289'
   },
   style1:{
     objectFit: 'cover',
