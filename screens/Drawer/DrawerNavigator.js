@@ -3,6 +3,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import HomeScreen from '../home/HomeScreen';
 import { View, Text } from 'react-native';
 import CustomDrawer from './CustomDrawer';
+import ProfileScreen from '../profile/ProfileScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -26,7 +27,7 @@ export default function DrawerNavigator() {
         },
       }}
     >
-      <Drawer.Screen name="Perfil" component={() => <PlaceholderScreen name="Perfil" />} />
+      <Drawer.Screen name="Perfil" component={ProfileScreen} />
       <Drawer.Screen name="Baralhos" component={HomeScreen} />
     </Drawer.Navigator>
   );
