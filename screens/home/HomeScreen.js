@@ -32,21 +32,21 @@ export default function HomeScreen({ navigation }) {
   }, []);
 
   const handleResetDificuldade = async () => {
-  try {
-    const response = await fetch('http://localhost:3001/cards/dificuldade', {
-      method: 'PUT',
-    });
-    if (response.ok) {
-      alert('Sucesso', 'Dificuldade dos cards reinicializada!');
-      const data = await response.json();
-      setCards(data);
-    } else {
-      alert('Erro', 'Não foi possível reinicializar as dificuldades.');
+    try {
+      const response = await fetch('http://localhost:3001/cards/dificuldade', {
+        method: 'PUT',
+      });
+      if (response.ok) {
+        alert('Dificuldade dos cards reinicializada!');
+        const data = await response.json();
+        setCards(data);
+      } else {
+        alert('Erro', 'Não foi possível reinicializar as dificuldades.');
+      }
+    } catch (err) {
+      alert('Erro', 'Ocorreu um erro ao reinicializar as dificuldades.');
     }
-  } catch (err) {
-    alert('Erro', 'Ocorreu um erro ao reinicializar as dificuldades.');
-  }
-};
+  };
 
   return (
     <View style={styles.container}>

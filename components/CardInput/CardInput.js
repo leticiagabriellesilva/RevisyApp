@@ -1,17 +1,17 @@
 import React from 'react';
-import {View, StyleSheet, TextInput} from 'react-native';
+import { View, StyleSheet, TextInput } from 'react-native';
 import Style from "./Style"
-function CardInput({value, onChangeText, placeholder, corDeFundo }) {
-    return (
-      <View style={Style.cardInputContainer}>
-        <TextInput style={[styles.input, { backgroundColor: corDeFundo }]}
-          multiline
-          value={value}
-          onChangeText={onChangeText}
-          placeholder={placeholder}
-        />
-        </View>
-    );
+function CardInput({ value, onChangeText, placeholder, corDeFundo }) {
+  return (
+    <View style={Style.cardInputContainer}>
+      <TextInput style={[styles.input, { backgroundColor: corDeFundo }]}
+        multiline
+        value={value}
+        onChangeText={onChangeText}
+        placeholder={placeholder}
+      />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '90%',
-    height: 200,
+    height: 100,
     padding: 15,
     backgroundColor: '#D3D3D3',
     borderRadius: 25,

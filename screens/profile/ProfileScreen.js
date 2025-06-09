@@ -70,8 +70,8 @@ export default function ProfileScreen() {
                 <VerMaisButton onPress={() => { }} />
             </View>
 
-            <View style={styles.buttomContainer}> 
-                <EditProfileButton onPress={() => {}} />
+            <View style={styles.buttomContainer}>
+                <EditProfileButton onPress={() => { }} />
             </View>
 
         </View>

@@ -13,14 +13,14 @@ export default function App({ navigation }) {
   const [cards, setCards] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-   useEffect(() => {
-  fetch('http://localhost:3001/cards')
-    .then(res => res.json())
-    .then(data => {
-      setCards(data.filter(card => card.dificuldade === true || card.dificuldade === 1));
-    })
-    .catch(err => console.error('Erro ao buscar cards:', err));
-}, []);
+  useEffect(() => {
+    fetch('http://localhost:3001/cards')
+      .then(res => res.json())
+      .then(data => {
+        setCards(data.filter(card => card.dificuldade === true || card.dificuldade === 1));
+      })
+      .catch(err => console.error('Erro ao buscar cards:', err));
+  }, []);
 
   const [isFlipped, setIsFlipped] = useState(false);
   const flipAnimation = useRef(new Animated.Value(0)).current
@@ -31,7 +31,7 @@ export default function App({ navigation }) {
   });
 
   const flipToFrontStyle = {
-    transform: [{rotateY: frontInterpolate}]
+    transform: [{ rotateY: frontInterpolate }]
   };
 
 
@@ -41,12 +41,12 @@ export default function App({ navigation }) {
   });
 
   const flipToBackStyle = {
-    transform: [{rotateY: backInterpolate}]
+    transform: [{ rotateY: backInterpolate }]
   };
 
 
   const flipCard = () => {
-    if(isFlipped) {
+    if (isFlipped) {
 
       Animated.spring(flipAnimation, {
         toValue: 0,
@@ -67,129 +67,136 @@ export default function App({ navigation }) {
   };
 
   function handleDificuldade(cardId, dificuldade) {
-  fetch(`http://localhost:3001/cards/${cardId}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ dificuldade })
-  })
-    .then(res => res.json())
-    .then(data => {
-      setCards(prevCards => {
-        let updatedCards = prevCards.map(card =>
-          card.id === cardId ? { ...card, dificuldade: !!dificuldade } : card
-        );
-        if (!dificuldade) {
-          // Se ficou fácil, tira da fila
-          updatedCards = updatedCards.filter(card => card.id !== cardId);
-        } else {
-          // Se ficou difícil, manda para o final da fila
-          const card = updatedCards.find(card => card.id === cardId);
-          updatedCards = updatedCards.filter(card => card.id !== cardId);
-          updatedCards.push(card);
-        }
-        return updatedCards;
-      });
-      // Sempre volta para o primeiro card da fila
-      setCurrentIndex(0);
+    fetch(`http://localhost:3001/cards/${cardId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ dificuldade })
     })
-    .catch(err => {
-      console.error('Erro ao atualizar dificuldade:', err);
-    });
-}
+      .then(res => res.json())
+      .then(data => {
+        setCards(prevCards => {
+          let updatedCards = prevCards.map(card =>
+            card.id === cardId ? { ...card, dificuldade: !!dificuldade } : card
+          );
+          if (!dificuldade) {
+            // Se ficou fácil, tira da fila
+            updatedCards = updatedCards.filter(card => card.id !== cardId);
+          } else {
+            // Se ficou difícil, manda para o final da fila
+            const card = updatedCards.find(card => card.id === cardId);
+            updatedCards = updatedCards.filter(card => card.id !== cardId);
+            updatedCards.push(card);
+          }
+          return updatedCards;
+        });
+        // Sempre volta para o primeiro card da fila
+        setCurrentIndex(0);
+      })
+      .catch(err => {
+        console.error('Erro ao atualizar dificuldade:', err);
+      });
+  }
 
-useEffect(() => {
-  if (cards.length === 0 || currentIndex >= cards.length) {
+  useEffect(() => {
+    if (cards.length === 0 || currentIndex >= cards.length) {
       const timeout = setTimeout(() => navigation.reset({
         index: 0,
         routes: [{ name: 'Home' }],
       }), 1000);
       return () => clearTimeout(timeout);
     }
-}, [cards, currentIndex, navigation]);
+  }, [cards, currentIndex, navigation]);
 
   if (cards.length === 0 || currentIndex >= cards.length) {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fafafa' }}>
-      <Text style={{ fontSize: 20, color: '#333' }}>Você revisou todos os cards!</Text>
-    </View>
-  );
-}
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fafafa' }}>
+        <Text style={{ fontSize: 20, color: '#333' }}>Você revisou todos os cards!</Text>
+      </View>
+    );
+  }
 
 
   return (
     <View style={styles.container}>
-        {/* Precisa incrementar o topbar igual a tela home (Leticia) */}
-        <TopBar
-          image1={require('../../assets/backIcon.png')}
-          onPress1={() => navigation.navigate('Home')}
-          style1={styles.image}
-          image2={require('../../assets/confirmIcon.png')}
-          onPress2={() => navigation.navigate('Home')}
-          style2={styles.image}
-        />
-        
+      {/* Precisa incrementar o topbar igual a tela home (Leticia) */}
+      <TopBar
+        image1={require('../../assets/backIcon.png')}
+        onPress1={() => navigation.navigate('Home')}
+        style1={styles.image}
+        image2={require('../../assets/confirmIcon.png')}
+        onPress2={() => navigation.navigate('Home')}
+        style2={styles.image}
+      />
 
-        <View style={styles.content}>
 
-            <View style={styles.showCard}>
-                <TouchableWithoutFeedback onPress={flipCard}>
-                    <View style={styles.cardContainer}>
-                        {/*PERGUNTA*/}
-                    <Animated.View style={[styles.front, styles.card, flipToFrontStyle]}>
-                        <Text style={styles.text}>{cards[currentIndex]?.pergunta || 'Sem perguntas'}</Text>
-                    </Animated.View>
+      <View style={styles.content}>
 
-                    {/*RESPOSTA*/}
-                    <Animated.View style={[styles.back, styles.card, flipToBackStyle]}>
-                        <Text style={styles.text}>{cards[currentIndex]?.resposta || 'Sem resposta'}</Text>
-                    </Animated.View>
-                    </View>
-                </TouchableWithoutFeedback>
+        <View style={styles.showCard}>
+          <TouchableWithoutFeedback onPress={flipCard}>
+            <View style={styles.cardContainer}>
+              {/*PERGUNTA*/}
+              <Animated.View style={[styles.front, styles.card, flipToFrontStyle]}>
+                <Text style={styles.text}>{cards[currentIndex]?.pergunta || 'Sem perguntas'}</Text>
+              </Animated.View>
+
+              {/*RESPOSTA*/}
+              <Animated.View style={[styles.back, styles.card, flipToBackStyle]}>
+                <Text style={styles.text}>{cards[currentIndex]?.resposta || 'Sem resposta'}</Text>
+              </Animated.View>
             </View>
-
-            <View style={styles.answer}>
-                <View style={styles.informationTitle}>
-                    <Text>Nível de dificuldade</Text>
-                    <ButtonImage
-                        image={require('../../assets/informacoes.png')}
-                        onPress={() => Alert.alert('Nível de dificuldade', 'Isso define quanto tempo você precisa entre uma revisão e outra. Recomendado: \nDifícil - 10 minutos \nBom - 30 min \nFácil - 2 dias')}
-                        style={styles.imageInformationButtons}
-                    />
-                </View>
-                <View style={styles.answerButtons}>
-                    <TouchableOpacity style={styles.answerButton}
-                      onPress={() => handleDificuldade(cards[currentIndex].id, 1)}
-                      >
-                        <Text style={styles.answerTexts}>Difícil</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={styles.answerButton}
-                      onPress={() => handleDificuldade(cards[currentIndex].id, 0)}
-                      >
-                        <Text style={styles.answerTexts}>Fácil</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-
+          </TouchableWithoutFeedback>
         </View>
 
-        
+        <View style={styles.answer}>
+          <View style={styles.informationTitle}>
+            <Text>Nível de dificuldade</Text>
+            <ButtonImage
+              image={require('../../assets/informacoes.png')}
+              onPress={() => Alert.alert('Nível de dificuldade', 'Isso define quanto tempo você precisa entre uma revisão e outra. Recomendado: \nDifícil - 10 minutos \nBom - 30 min \nFácil - 2 dias')}
+              style={styles.imageInformationButtons}
+            />
+          </View>
+          <View style={styles.answerButtons}>
+            <TouchableOpacity style={styles.answerButton}
+              onPress={() => {
+                handleDificuldade(cards[currentIndex].id, 1);
+                if (isFlipped) flipCard();
+              }}
+            >
+              <Text style={styles.answerTexts}>Difícil</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.answerButton}
+              onPress={() => {
+                handleDificuldade(cards[currentIndex].id, 0);
+                if (isFlipped) flipCard();
+              }
+              }
+            >
+              <Text style={styles.answerTexts}>Fácil</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+      </View>
+
+
 
     </View>
   );
 }
 
-const {width, height} = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#f2f2f2',
-    },
-    image:{
+  container: {
+    flex: 1,
+    backgroundColor: '#f2f2f2',
+  },
+  image: {
     width: 50,
     height: 50,
-  }, 
+  },
   showCard: {
     alignItems: 'center',
     marginTop: 25,
@@ -216,32 +223,32 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 20
   },
-  content:{
+  content: {
     flex: 1,
     justifyContent: 'space-evenly'
   },
-  answer:{
+  answer: {
     alignItems: 'center',
     width: '100%'
   },
-  informationTitle:{
+  informationTitle: {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
     marginBottom: 20,
   },
-  imageInformationButtons:{
+  imageInformationButtons: {
     width: 16,
     height: 16,
     marginLeft: 5,
   },
-  answerButtons:{
+  answerButtons: {
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-evenly'
   },
-  answerButton:{
+  answerButton: {
     width: 100,
     height: 70,
     alignItems: 'center',
@@ -250,7 +257,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#F39C6B'
   },
-  answerTexts:{
+  answerTexts: {
     fontSize: 18
   }
 });

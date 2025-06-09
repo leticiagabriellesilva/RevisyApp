@@ -19,8 +19,8 @@ function PlaceholderScreen({ name }) {
 
 export default function DrawerNavigator() {
   return (
-    <Drawer.Navigator 
-      initialRouteName="Baralhos" 
+    <Drawer.Navigator
+      initialRouteName="Cards"
       drawerContent={(props) => <CustomDrawer {...props} />}
       screenOptions={{
         headerShown: false,
@@ -30,7 +30,7 @@ export default function DrawerNavigator() {
       }}
     >
       <Drawer.Screen name="Perfil" component={ProfileScreen} />
-      <Drawer.Screen name="Baralhos" component={HomeScreen} />
+      <Drawer.Screen name="Cards" component={HomeScreen} />
     </Drawer.Navigator>
   );
 }
