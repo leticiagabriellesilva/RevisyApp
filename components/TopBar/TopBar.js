@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import ButtonImage from './ButtonImage';
+import ButtonImage from '../ButtonImage/ButtonImage';
 import { Divider } from 'react-native-paper';
 
 
@@ -43,8 +43,7 @@ const styles = StyleSheet.create({
   logo: {
     fontSize: 25,
     fontWeight: 'bold',
-    objectFit: 'cover',
-    alignContent: 'center',
+    objectFit: 'cover'
   },
   style1:{
     objectFit: 'cover',
