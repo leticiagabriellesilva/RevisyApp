@@ -109,12 +109,12 @@ export default function App(pack) {
     <View style={styles.container}>
         {/* Precisa incrementar o topbar igual a tela home (Leticia) */}
         <TopBar
-            image1={require('../../assets/backIcon.png')}
-            onPress1={() => Alert.alert('Ainda nada', 'Aqui vai voltar para a tela anterior')}
-            style1={styles.image}
-            image2={require('../../assets/confirmIcon.png')}
-            onPress2={() => Alert.alert('Ainda nada', 'Aqui vai salvar e resetar os cards')}
-            style2={styles.image}
+          image1={require('../../assets/backIcon.png')}
+          onPress1={() => navigation.navigate('Home')}
+          style1={styles.image}
+          image2={require('../../assets/confirmIcon.png')}
+          onPress2={() => navigation.navigate('Home')}
+          style2={styles.image}
         />
         <IconTextButton
             icon={require('../../assets/backReadCard.png')}
@@ -177,7 +177,7 @@ const {width, height} = Dimensions.get('screen');
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fafafa',
+        backgroundColor: '#f2f2f2',
     },
     image:{
     width: 50,

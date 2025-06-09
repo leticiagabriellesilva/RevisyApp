@@ -14,7 +14,7 @@ export default function ProfileScreen() {
             <StatusBar style="light" />
 
             <View style={[styles.header, styles.BackgroundTheme]}>
-                <ArrowButton style={styles.arrowButton} onPress={() => { }} />
+                <ArrowButton style={styles.arrowButton} onPress={() => navigation.navigate('Home')} />
 
                 <Image source={require('../../images/baruffi.jpg')} style={styles.profileImage} />
 

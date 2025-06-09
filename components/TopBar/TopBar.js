@@ -46,8 +46,14 @@ const styles = StyleSheet.create({
     objectFit: 'cover'
   },
   style1:{
+    width: 40,  
+    height: 40,
+    objectFit: 'cover',
+  },
+  style2:{
+    width: 30,  
+    height: 30,
     objectFit: 'cover',
   }
-
   
 });

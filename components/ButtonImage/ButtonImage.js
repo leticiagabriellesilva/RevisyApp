@@ -6,6 +6,7 @@ function ButtonImage({ image, onPress, style}) {
             <Image
                 style={style}
                 source={image}
+                resizeMode="contain" 
             />
         </TouchableOpacity>
     )
