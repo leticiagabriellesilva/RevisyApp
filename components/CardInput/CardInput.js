@@ -1,12 +1,12 @@
 import React from 'react';
 import {View, StyleSheet, TextInput} from 'react-native';
 import Style from "./Style"
-function CardInput({valor, onChangeText, placeholder, corDeFundo }) {
+function CardInput({value, onChangeText, placeholder, corDeFundo }) {
     return (
       <View style={Style.cardInputContainer}>
         <TextInput style={[styles.input, { backgroundColor: corDeFundo }]}
           multiline
-          value={valor}
+          value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
         />

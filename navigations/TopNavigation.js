@@ -35,7 +35,6 @@ export default function TopNav() {
             styles.indicator,
             {
               width: '30.5%',
-              // Add more styles to suit your needs. Thank you for watching.
             },
           ],
         }}

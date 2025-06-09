@@ -6,7 +6,7 @@ import ButtonImage from '../../components/ButtonImage/ButtonImage';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 //Tem que passar o baralho para entrar nessa tela.
-export default function App(pack) {
+export default function App({ navigation }) {
   const [baralho, setBaralho] = useState('Redes');
   const [pergunta, setPergunta] = useState('');
   const [resposta, setResposta] = useState('');
@@ -67,8 +67,8 @@ export default function App(pack) {
   };
 
   function handleDificuldade(cardId, dificuldade) {
-  fetch(`http://localhost:3001/cards/${cardId}/dificuldade`, {
-    method: 'PATCH',
+  fetch(`http://localhost:3001/cards/${cardId}`, {
+    method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ dificuldade })
   })
@@ -97,13 +97,32 @@ export default function App(pack) {
     });
 }
 
+  useEffect(() => {
+  if (cards.length === 0 || currentIndex >= cards.length) {
+    Alert.alert(
+      'Parabéns! Você revisou todos os cards!',
+      [
+        {
+          text: 'OK',
+          onPress: () => navigation.navigate('Baralhos'),
+        },
+      ],
+      { cancelable: false }
+    );
+    // Redireciona automaticamente após 1 segundo, caso o usuário não clique
+    const timeout = setTimeout(() => navigation.navigate('Baralhos'), 1000);
+    return () => clearTimeout(timeout);
+  }
+}, [cards, currentIndex, navigation]);
+
   if (cards.length === 0 || currentIndex >= cards.length) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Parabéns! Você revisou todos os cards!</Text>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fafafa' }}>
+      <Text style={{ fontSize: 20, color: '#333' }}>Você revisou todos os cards!</Text>
     </View>
   );
 }
+
 
   return (
     <View style={styles.container}>

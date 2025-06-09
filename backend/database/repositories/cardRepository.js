@@ -22,12 +22,17 @@ module.exports = {
         });
     },
 
-    updateCardById: async (id, { pergunta, resposta, dificuldade }) => {
-        return prisma.card.update({
-            where: { id },
-            data: { pergunta, resposta, dificuldade },
-        });
-    },
+    updateCardById: async (id, updateFields) => {
+    const updateData = {};
+    if (typeof updateFields.pergunta !== 'undefined') updateData.pergunta = updateFields.pergunta;
+    if (typeof updateFields.resposta !== 'undefined') updateData.resposta = updateFields.resposta;
+    if (typeof updateFields.dificuldade !== 'undefined') updateData.dificuldade = !!updateFields.dificuldade;
+
+    return prisma.card.update({
+        where: { id },
+        data: updateData,
+    });
+},
 
     updateAllCardsDifficulty: async () => {
         await prisma.card.updateMany({ data: { dificuldade: true } });

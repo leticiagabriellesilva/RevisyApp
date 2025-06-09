@@ -71,9 +71,9 @@ if (!pergunta || !resposta) {
     const respText = await response.text();
 
     if (response.ok) {
-      Alert.alert('Sucesso', 'Card criado com sucesso!');
       setPergunta('');
       setResposta('');
+      Alert.alert('Sucesso', 'Card criado com sucesso!');
     } else {
       Alert.alert('Erro', 'Não foi possível criar o card.');
     }
