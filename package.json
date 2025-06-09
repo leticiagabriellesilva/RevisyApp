@@ -1,9 +1,28 @@
 {
   "dependencies": {
+    "@expo/metro-runtime": "~5.0.4",
+    "@prisma/client": "6.9.0",
+    "@prisma/react-native": "6.0.1",
+    "@react-native-picker/picker": "2.11.0",
+    "@react-navigation/bottom-tabs": "^7.3.14",
+    "@react-navigation/drawer": "^7.4.1",
+    "cors": "^2.8.5",
+    "expo": "^53.0.9",
+    "expo-status-bar": "^2.2.3",
     "express": "^5.1.0",
+    "react-dom": "19.1.0",
+    "react-native-gesture-handler": "^2.25.0",
+    "react-native-paper": "^5.14.5",
+    "react-native-quick-base64": "2.2.0",
+    "react-native-reanimated": "^3.18.0",
+    "react-native-vector-icons": "^10.2.0",
+    "react-native-web": "^0.20.0",
+    "react-navigation": "^5.0.0",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
-    "swagger-autogen": "^2.23.7"
+    "@types/react": "~19.0.10",
+    "swagger-autogen": "^2.23.7",
+    "typescript": "~5.8.3"
   }
 }
