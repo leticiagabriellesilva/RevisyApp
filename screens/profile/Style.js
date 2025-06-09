@@ -9,23 +9,23 @@ export default StyleSheet.create({
     header: {
         position: 'relative',
         alignItems: 'center',
-        padding: 20,
+        padding: 15,
     },
 
     profileImage: {
         width: 120,
         height: 120,
         borderRadius: 100,
-        marginTop: 20,
+        marginTop: 25,
     },
 
     profileName: {
         color: 'white',
-        fontSize: 25,
+        fontSize: 23,
     },
 
     userName: {
-        color: '#c7c7c7',
+        color: '#807C7C',
         fontSize: 13,
     },
 
@@ -36,12 +36,12 @@ export default StyleSheet.create({
 
     arrowButton: {
         position: 'absolute',
-        top: 50,
+        top: 35,
         left: 20,
     },
 
     container2: {
-        padding: 20,
+        padding: 15,
         marginVertical: 10,
         backgroundColor: '#fff',
         borderRadius: 10,
@@ -77,16 +77,16 @@ export default StyleSheet.create({
     decksContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        justifyContent: 'flex-start',
-        rowGap: 10,
-        columnGap: 75,
-        marginLeft: 17
+        justifyContent: 'space-evenly',
+        // rowGap: 10,
+        // columnGap: 75,
+        // marginLeft: 17
     },
 
     deckItem: {
-        paddingLeft: 30,
-        alignItems: 'center', // centraliza o texto abaixo do componente
-        width: 100,           // defina uma largura consistente para alinhamento
+        // paddingLeft: 30,
+        // alignItems: 'center',
+        // width: 100,
     },
 
     deckScore: {
@@ -96,14 +96,19 @@ export default StyleSheet.create({
     },
 
     ColorTheme: {
-        color: 'purple',
+        color: '#96D289',
     },
 
     BackgroundTheme: {
-        backgroundColor: 'purple'
+        backgroundColor: '#96D289'
     },
 
     buttomView: {
         padding: 20,
+    },
+
+    buttomContainer: {
+        padding: 8,
+        alignSelf: 'center',
     }
 });

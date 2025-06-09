@@ -6,19 +6,20 @@ import ArrowButton from '../../components/Buttons/ArrowButton';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Deck from '../../components/Deck/Deck';
 import VerMaisButton from '../../components/Buttons/VerMaisButton';
+import EditProfileButton from '../../components/Buttons/EditProfileButton';
 
 export default function ProfileScreen() {
     return (
-        <ScrollView style={styles.container}>
+        <View style={styles.container}>
             <StatusBar style="light" />
 
             <View style={[styles.header, styles.BackgroundTheme]}>
                 <ArrowButton style={styles.arrowButton} onPress={() => { }} />
 
-                <Image source={require('../../images/profile.png')} style={styles.profileImage} />
+                <Image source={require('../../images/baruffi.jpg')} style={styles.profileImage} />
 
-                <Text style={styles.profileName}>Júlio Cabeça de Ovo</Text>
-                <Text style={styles.userName}>xx_JulinhoGames_xx</Text>
+                <Text style={styles.profileName}>Bruno Baruffi</Text>
+                <Text style={styles.userName}>bruno_baruffi</Text>
                 <Text style={styles.ranking}>
                     <Ionicons name="star" size={12} color="gold" /> Top: 1%
                 </Text>
@@ -69,6 +70,10 @@ export default function ProfileScreen() {
                 <VerMaisButton onPress={() => { }} />
             </View>
 
-        </ScrollView>
+            <View style={styles.buttomContainer}> 
+                <EditProfileButton onPress={() => {}} />
+            </View>
+
+        </View>
     );
 };

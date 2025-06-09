@@ -15,7 +15,7 @@ export default function EditProfileButton({ onPress, style }) {
 
 const styles = StyleSheet.create({
     button: {
-        backgroundColor: 'blue',
+        backgroundColor: '#96D289',
         padding: 10,
         width: 200,
         borderRadius: 5,

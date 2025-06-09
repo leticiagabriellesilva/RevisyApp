@@ -13,7 +13,7 @@ export default function VerMaisButton({ onPress }) {
 
 const styles = StyleSheet.create({
     button: {
-        padding: 10,
+        padding: 5,
         flexDirection: 'row',
         alignItems: 'center'
     },
