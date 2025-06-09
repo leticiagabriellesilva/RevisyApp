@@ -1,19 +1,11 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import CreateCard from './screens/CreateCard/CreateCard';
-import ReadCard from './screens/ReadCard/ReadCard';
-import HomeScreen from './screens/home/HomeScreen';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import MainNavigaton from './navigations/MainNavigation';
 
 export default function App() {
   return (
-    <HomeScreen/>
+    <NavigationContainer>
+      <MainNavigaton />
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

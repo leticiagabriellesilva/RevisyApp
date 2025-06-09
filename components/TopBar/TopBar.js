@@ -22,38 +22,28 @@ export default function TopBar({ image1, onPress1, style1, image2, onPress2, sty
           style={style2}
         />
       </View>
-      <Divider
-              style={styles.progressionBar}
-      />
-    
     </View>
-    
-    
   );
 }
 
 const styles = StyleSheet.create({
   conteiner: {
     width:'100%',
-    backgroundColor: '#fff',
+    backgroundColor: '#F2F2F2',
   },
   top: {
-    paddingTop: 60,
+    paddingTop: 50,
     paddingBottom: 20,
     paddingHorizontal: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#F2F2F2',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
   },
   logo: {
-    fontSize: 18,
+    fontSize: 25,
     fontWeight: 'bold',
     objectFit: 'cover'
-  },
-  progressionBar: {
-    height: 12,
-    backgroundColor: '#96D289'
   },
   style1:{
     objectFit: 'cover',

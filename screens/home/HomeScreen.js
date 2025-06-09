@@ -1,22 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   ScrollView,
-  Alert,
-  useColorScheme,
+  Alert
 } from 'react-native';
 import TopBar from '../../components/TopBar/TopBar';
 import styles from './Style';
 
 export default function HomeScreen({ navigation }) {
-  const colorScheme = useColorScheme();
-  const [darkMode, setDarkMode] = useState(colorScheme === 'dark');
   const [cards, setCards] = useState([]);
-
-  const backgroundColor = darkMode ? '#122021' : '#F2F2F2';
-  const textColor = darkMode ? '#fff' : '#000';
 
   useEffect(() => {
     async function fetchCards() {
@@ -33,19 +27,12 @@ export default function HomeScreen({ navigation }) {
   }, []);
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
+    <View style={styles.container}>
       <TopBar
-        darkMode={darkMode}
         image1={require('../../assets/image.png')}
         onPress1={() => navigation.openDrawer()}
+        image2={require('../../assets/pngbranco.png')}
         style1={styles.icon}
-        image2={
-          darkMode
-            ? require('../../assets/sun.png')
-            : require('../../assets/moon.png')
-        }
-        onPress2={() => setDarkMode(!darkMode)}
-        style2={[styles.icon, styles.iconButton]}
       />
 
       <View style={styles.headerBox}>

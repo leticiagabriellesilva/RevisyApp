@@ -41,6 +41,7 @@ export default function App() {
           value={pergunta}
           onChangeText={setPergunta}
           placeholder="Digite a pergunta aqui..."
+          corDeFundo={"#AD94DB"}
         />
         <Text style={styles.title}>VERSO</Text>
         <CardInput
@@ -48,6 +49,7 @@ export default function App() {
           value={resposta}
           onChangeText={setResposta}
           placeholder="Digite a resposta aqui..."
+          corDeFundo={"#96D289"}
         />
       </View>
 
@@ -90,7 +92,7 @@ if (!pergunta || !resposta) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fafafa',
+    backgroundColor: '#F2F2F2',
   },
   progressionBar: {
     height: 12,
@@ -120,13 +122,13 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 20,
     alignSelf: 'center',
-    backgroundColor: '#000',
+    backgroundColor: '#F39C6B',
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 8
   },
   buttonText: {
-    color: '#fff',
+    color: '#000',
     fontSize: 16
   },
   image: {

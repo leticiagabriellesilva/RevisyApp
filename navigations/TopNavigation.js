@@ -1,6 +1,6 @@
 import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import HomeScreen from '../screens/home/HomeScreen';
+import HomeScreen from '../screens/Home/HomeScreen';
 import { StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
 import { semiBold } from '../utils/fonts';
