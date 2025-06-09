@@ -3,12 +3,10 @@ import { View, Text, StyleSheet } from 'react-native';
 import ButtonImage from './ButtonImage';
 import { Divider } from 'react-native-paper';
 
-export default function TopBar({ image1, onPress1, style1, image2, onPress2, style2, darkMode }) {
-  const backgroundColor = darkMode ? '#122021' : '#fff';
-  const textColor = darkMode ? '#fff' : '#000';
 
+export default function TopBar({ image1, onPress1, style1, image2, onPress2, style2 }) {
   return (
-    <View style={[styles.container, { backgroundColor }]}>
+    <View style={styles.conteiner}>
       <View style={styles.top} >
         <ButtonImage
           image={image1}
@@ -16,7 +14,7 @@ export default function TopBar({ image1, onPress1, style1, image2, onPress2, sty
           style={style1}
         />
 
-        <Text style={[styles.logo, { color: textColor }]}>Revisy</Text>
+        <Text style={styles.logo}>Revisy</Text>
 
         <ButtonImage
           image={image2}
@@ -24,34 +22,33 @@ export default function TopBar({ image1, onPress1, style1, image2, onPress2, sty
           style={style2}
         />
       </View>
-      {/* <Divider
-              style={styles.progressionBar}
-      /> */}
-    
     </View>
-    
-    
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    width: '100%',
+  conteiner: {
+    width:'100%',
+    backgroundColor: '#F2F2F2',
   },
   top: {
-    paddingTop: 60,
+    paddingTop: 50,
     paddingBottom: 20,
     paddingHorizontal: 20,
+    backgroundColor: '#F2F2F2',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
   },
   logo: {
-    fontSize: 18,
+    fontSize: 25,
     fontWeight: 'bold',
+    objectFit: 'cover',
+    alignContent: 'center',
   },
-  progressionBar: {
-    height: 8,
-    backgroundColor: '#AD94DB',
-  },
+  style1:{
+    objectFit: 'cover',
+  }
+
+  
 });

@@ -21,7 +21,7 @@ export default StyleSheet.create({
   },
   cardText: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: 'normal',
   },
   icon: {
     width: 50,
