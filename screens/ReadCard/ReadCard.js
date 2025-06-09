@@ -3,6 +3,8 @@ import { Animated, Dimensions, StyleSheet, Text, TouchableWithoutFeedback, View,
 import TopBar from '../../components/TopBar/TopBar';
 import IconTextButton from '../../components/IconTextButton/IconTextButton';
 import ButtonImage from '../../components/ButtonImage/ButtonImage';
+import Ionicons from '@expo/vector-icons/Ionicons';
+
 
 //Tem que passar o baralho para entrar nessa tela.
 export default function App(pack) {
@@ -101,15 +103,11 @@ export default function App(pack) {
                 </View>
                 <View style={styles.answerButtons}>
                     <TouchableOpacity style={styles.answerButton}>
-                        <Text>Difícil</Text>
+                        <Text style={styles.answerTexts} >Difícil</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.answerButton}>
-                        <Text>Médio</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={styles.answerButton}>
-                        <Text>Fácil</Text>
+                        <Text style={styles.answerTexts}>Fácil</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -127,9 +125,12 @@ const {width, height} = Dimensions.get('screen');
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fafafa',
+        backgroundColor: '#F2F2F2',
     },
-
+  image:{
+    width: 50,
+    height: 50,
+  },  
   showCard: {
     alignItems: 'center',
     marginTop: 25,
@@ -154,7 +155,7 @@ const styles = StyleSheet.create({
     backfaceVisibility: 'hidden',
   },
   text: {
-    fontSize: 20
+    fontSize: 22
   },
   content:{
     flex: 1,
@@ -179,14 +180,19 @@ const styles = StyleSheet.create({
   answerButtons:{
     width: '100%',
     flexDirection: 'row',
-    justifyContent: 'space-evenly'
+    justifyContent: 'center'
   },
   answerButton:{
-    width: 80,
-    height: 50,
+    width: 100,
+    height: 70,
     alignItems: 'center',
+    borderRadius: 15,
+    marginHorizontal: 20,
     justifyContent: 'center',
-    backgroundColor: 'coral'
+    backgroundColor: '#F39C6B'
+  },
+  answerTexts:{
+    fontSize: 18
   }
 
 });

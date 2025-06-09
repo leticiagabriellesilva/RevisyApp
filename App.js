@@ -5,7 +5,7 @@ import ReadCard from './screens/ReadCard/ReadCard';
 
 export default function App() {
   return (
-    <ReadCard/>
+    <CreateCard/>
   );
 }
 
