@@ -7,7 +7,7 @@ module.exports = {
             return res.status(201).json(newCard);
         }
         catch(error){
-            if (error.message.includes('obrigatório')){
+            if (error.message.includes('obrigat처rio')){
                 return res.status(400).json({ error: error.message});
             }
 
@@ -34,7 +34,7 @@ module.exports = {
             return res.json(card);
         }
         catch(error){
-            if (error.message.includes('não encontrado')){
+            if (error.message.includes('n찾o encontrado')){
                 return res.status(404).json({ error: error.message });
             }
 
@@ -50,7 +50,7 @@ module.exports = {
             return res.json(cardUpdated);
         }
         catch(error){
-            if (error.message.includes('não informado')){
+            if (error.message.includes('n찾o informado')){
                 return res.status(400).json( { error: error.message });
             }
 
@@ -66,7 +66,7 @@ module.exports = {
             return res.status(204).send(); 
         }
         catch(error){
-            if (error.message.includes('não informado')){
+            if (error.message.includes('n찾o informado')){
                 return res.status(400).json({error: error.message })
             }
 
@@ -75,9 +75,14 @@ module.exports = {
         }
     },
 
+    async updateAllCardsDifficulty(req, res) {
+    try {
+        const updatedCards = await cardService.updateAllCardsDifficulty();
+        return res.json(updatedCards);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: error.message || 'Erro ao atualizar dificuldade dos cards.' });
+    }
+}
 
-
-
-
-    
 };

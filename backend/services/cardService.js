@@ -2,15 +2,11 @@ const cardRepository = require('../database/repositories/cardRepository')
 
 module.exports = {
     async createCard(req) {
-    if (!req.pergunta || !req.resposta){
-        throw new Error('Pergunta e resposta são obrigatórios.');
-    }
-    // Sempre cria com dificuldade true
-    return cardRepository.createCard({
-        pergunta: req.pergunta,
-        resposta: req.resposta,
-        dificuldade: true
-    });
+        if (!req.pergunta || !req.resposta){
+            throw new Error('Pergunta e resposta são obrigatórios.');
+        }
+
+        return cardRepository.createCard(req);
     },
 
     async getAllCards(){
@@ -29,16 +25,12 @@ module.exports = {
         return cardRepository.updateCardById(id, req);
     },
 
+    async updateAllCardsDifficulty(){
+        return cardRepository.updateAllCardsDifficulty();
+    },
+
     async deleteCardById(id){
         if (!id) throw new Error('ID do card não informado.');
         return cardRepository.deleteCardById(id);
     },
-
-    async updateAllCardsDifficulty(difficulty){
-        if (typeof difficulty !== 'boolean') {
-            throw new Error('Dificuldade deve ser um valor booleano.');
-        }
-        return cardRepository.updateAllCardsDifficulty(difficulty);
-    }
-
 };

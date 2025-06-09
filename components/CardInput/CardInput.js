@@ -1,7 +1,7 @@
 import React from 'react';
-import {View, Text, StyleSheet, TextInput} from 'react-native';
+import {View, StyleSheet, TextInput} from 'react-native';
 import Style from "./Style"
-function CardInput({valor, onChangeText, placeholder }) {
+function CardInput({valor, onChangeText, placeholder, corDeFundo }) {
     return (
       <View style={Style.cardInputContainer}>
         <TextInput style={[styles.input, { backgroundColor: corDeFundo }]}

@@ -1,15 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   ScrollView,
-  Alert
+  Alert,
+  useColorScheme
 } from 'react-native';
 import TopBar from '../../components/TopBar/TopBar';
 import styles from './Style';
 
 export default function HomeScreen({ navigation }) {
+  const colorScheme = useColorScheme();
+  const [darkMode, setDarkMode] = useState(colorScheme === 'dark');
+  const textColor = darkMode ? '#fff' : '#000';
+
   const [cards, setCards] = useState([]);
 
   useEffect(() => {
