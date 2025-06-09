@@ -14,10 +14,10 @@ export default function App() {
     <View style={styles.container}>
       <TopBar
         image1={require('../../assets/backIcon.png')}
-        onPress1={() => Alert.alert('Ainda nada', 'Aqui vai voltar para a tela anterior')}
+        onPress1={() => navigation.navigate('Home')}
         style1={styles.image}
         image2={require('../../assets/confirmIcon.png')}
-        onPress2={() => Alert.alert('Ainda nada', 'Aqui vai salvar e resetar os cards')}
+        onPress2={() => navigation.navigate('Home')}
         style2={styles.image}
       />
       

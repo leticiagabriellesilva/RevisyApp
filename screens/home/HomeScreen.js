@@ -36,13 +36,21 @@ export default function HomeScreen({ navigation }) {
       <TopBar
         image1={require('../../assets/image.png')}
         onPress1={() => navigation.openDrawer()}
-        image2={require('../../assets/pngbranco.png')}
         style1={styles.icon}
+        image2={require('../../assets/circular.png')}
+        style2={styles.icon2}
       />
 
       <View style={styles.headerBox}>
-        <Text style={styles.headerText}>Baralhos</Text>
+        <Text style={styles.headerText}>Cards</Text>
       </View>
+
+      <TouchableOpacity
+        style={styles.reviewButton}
+        onPress={() => navigation.navigate('App', { cards })}
+      >
+        <Text style={styles.reviewButtonText}>Iniciar Revisão</Text>
+      </TouchableOpacity>
 
       <ScrollView contentContainerStyle={styles.scroll}>
         {cards.map((card, index) => (
@@ -50,7 +58,7 @@ export default function HomeScreen({ navigation }) {
             key={card.id ?? index}
             style={[
               styles.card,
-              { backgroundColor: index === 0 ? '#96D289' : '#AD94DB' },
+              { backgroundColor: '#AD94DB' },
             ]}
             onPress={() =>
               Alert.alert(

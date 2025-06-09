@@ -13,7 +13,7 @@ export default StyleSheet.create({
     color: '#122021',
   },
   card: {
-    padding: 30,
+    padding: 70,
     borderRadius: 20,
     marginBottom: 20,
     alignItems: 'center',
@@ -24,13 +24,12 @@ export default StyleSheet.create({
     fontWeight: 'normal',
   },
   icon: {
+    width: 60,
+    height: 60,
+  },
+  icon2: {
     width: 50,
     height: 50,
-  },
-  iconButton: {
-    backgroundColor: '#96D289',
-    padding: 10,
-    borderRadius: 10,
   },
   fab: {
     position: 'absolute',
@@ -47,4 +46,18 @@ export default StyleSheet.create({
     fontSize: 28,
     color: '#122021',
   },
+  reviewButton: {
+  backgroundColor: '#AD94DB',
+  paddingVertical: 10,
+  paddingHorizontal: 20,
+  borderRadius: 12,
+  alignSelf: 'center',
+  marginTop: 15,
+  marginBottom: 10,
+},
+reviewButtonText: {
+  color: 'white',
+  fontSize: 18,
+  fontWeight: 'normal',
+},
 });
