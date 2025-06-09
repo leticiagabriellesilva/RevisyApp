@@ -16,7 +16,6 @@ export default function App(pack) {
   fetch('http://localhost:3001/cards')
     .then(res => res.json())
     .then(data => {
-      console.log('Cards recebidos:', data); // <--- Adicione isso
       setCards(data.filter(card => card.dificuldade === true || card.dificuldade === 1));
     })
     .catch(err => console.error('Erro ao buscar cards:', err));
@@ -79,10 +78,10 @@ export default function App(pack) {
           card.id === cardId ? { ...card, dificuldade: !!dificuldade } : card
         );
         if (!dificuldade) {
-          // Se ficou fácil, remove da fila
+          // Se ficou fácil, tira da fila
           updatedCards = updatedCards.filter(card => card.id !== cardId);
         } else {
-          // Se ficou difícil, move para o final da fila
+          // Se ficou difícil, manda para o final da fila
           const card = updatedCards.find(card => card.id === cardId);
           updatedCards = updatedCards.filter(card => card.id !== cardId);
           updatedCards.push(card);

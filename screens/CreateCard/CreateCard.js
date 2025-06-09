@@ -25,7 +25,7 @@ export default function App() {
         <Text style={styles.label}>Baralho</Text>
         <Picker
           selectedValue={baralho}
-          onValueChange={(setBaralho) => setBaralho(setBaralho)}
+          onValueChange={(itemValue) => setBaralho(itemValue)}
           style={styles.picker}
         >
           <Picker.Item label="Redes" value="Redes" />
@@ -51,9 +51,38 @@ export default function App() {
         />
       </View>
 
-      <TouchableOpacity style={styles.button} onPress={() => Alert.alert('Ainda nada', 'Aqui vai salvar e resetar os cards')}>
-        <Text style={styles.buttonText}>Salvar</Text>
-      </TouchableOpacity>
+      <TouchableOpacity
+  style={styles.button}
+  onPress={async () => {
+
+if (!pergunta || !resposta) {
+  Alert.alert('Erro', 'Preencha a pergunta e a resposta!');
+  return;
+}
+  try {
+    console.log('Antes do fetch');
+    const response = await fetch('http://localhost:3001/cards/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pergunta, resposta, dificuldade: true })
+    });
+    const respText = await response.text();
+
+    if (response.ok) {
+      Alert.alert('Sucesso', 'Card criado com sucesso!');
+      setPergunta('');
+      setResposta('');
+    } else {
+      Alert.alert('Erro', 'Não foi possível criar o card.');
+    }
+  } catch (err) {
+    console.log('Erro:', err);
+    Alert.alert('Erro', 'Erro ao conectar com o servidor.');
+  }
+}}
+>
+  <Text style={styles.buttonText}>Salvar</Text>
+</TouchableOpacity>
     </View>
   );
 }

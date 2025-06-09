@@ -79,18 +79,5 @@ module.exports = {
 
 
 
-    async updateDificuldade(req, res) {
-    try {
-        const { id } = req.params;
-        const { dificuldade } = req.body; // dificuldade: 0 (fácil) ou 1 (difícil)
-        if (typeof dificuldade !== 'boolean' && dificuldade !== 0 && dificuldade !== 1) {
-            return res.status(400).json({ error: 'Dificuldade deve ser 0 (fácil) ou 1 (difícil).' });
-        }
-        const updated = await cardService.updateCardById(id, { dificuldade: Boolean(dificuldade) });
-        return res.json(updated);
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: 'Erro ao atualizar dificuldade.' });
-    }
-},
+    
 };

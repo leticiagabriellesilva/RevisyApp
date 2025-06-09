@@ -7,7 +7,7 @@ module.exports = {
             data: {
                 pergunta,
                 resposta,
-                dificuldade
+                dificuldade: true
             },
         });
     },
@@ -33,5 +33,10 @@ module.exports = {
         return prisma.card.delete({
             where: { id },
         })
+    },
+
+    updateAllCardsDifficulty: async (dificuldade) => {
+        await prisma.card.updateMany({ data: { dificuldade } });
+        return prisma.card.findMany();
     }
 }

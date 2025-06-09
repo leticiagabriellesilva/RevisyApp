@@ -8,7 +8,7 @@ router.get('/', cardController.getAllCards);
 router.get('/:id', cardController.getCardById);
 router.put('/:id', cardController.updateCardById);
 router.delete('/:id', cardController.deleteCardById);
+router.put('/dificuldade', cardController.updateAllCardsDifficulty);
 
-router.patch('/:id/dificuldade', cardController.updateDificuldade);
 
 module.exports = router;

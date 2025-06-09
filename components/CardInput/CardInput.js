@@ -7,7 +7,7 @@ function CardInput({valor, onChangeText, placeholder }) {
         <TextInput style={Style.input}
           multiline
           value={valor}
-          onValueChange={onChangeText}
+          onChangeText={onChangeText}
           placeholder={placeholder}
         />
         </View>
