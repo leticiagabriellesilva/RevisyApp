@@ -72,31 +72,14 @@ export default function HomeScreen({ navigation }) {
 
       <ScrollView contentContainerStyle={styles.scroll}>
         {cards.map((card, index) => (
-          <TouchableOpacity
+          <View
             key={card.id ?? index}
-            style={[
-              styles.card,
-              { backgroundColor: '#AD94DB' },
-            ]}
-            onPress={() =>
-              Alert.alert(
-                'Pergunta',
-                card.pergunta,
-                [
-                  {
-                    text: 'Mostrar Resposta',
-                    onPress: () => Alert.alert('Resposta', card.resposta),
-                  },
-                  { text: 'Fechar', style: 'cancel' },
-                ],
-                { cancelable: true }
-              )
-            }
+            style={[styles.card, { backgroundColor: '#AD94DB' }]}
           >
             <Text style={[styles.cardText, { color: textColor }]}>
               {card.pergunta}
             </Text>
-          </TouchableOpacity>
+          </View>
         ))}
       </ScrollView>
 
