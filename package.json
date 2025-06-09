@@ -22,6 +22,7 @@
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-native": "0.79.2",
+<<<<<<< HEAD
     "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-paper": "^5.14.5",
@@ -33,6 +34,15 @@
     "react-native-web": "^0.20.0",
     "react-navigation": "^5.0.0",
     "revisy": "file:"
+=======
+    "react-native-gesture-handler": "^2.25.0",
+    "react-native-paper": "^5.14.0",
+    "react-native-reanimated": "^3.17.5",
+    "react-navigation": "^5.0.0",
+    "react-dom": "19.0.0",
+    "react-native-web": "^0.20.0",
+    "@expo/metro-runtime": "~5.0.4"
+>>>>>>> bruno/ProfileScreen
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
