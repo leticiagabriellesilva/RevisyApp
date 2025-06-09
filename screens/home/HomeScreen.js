@@ -12,7 +12,7 @@ import styles from './Style';
 
 export default function HomeScreen({ navigation }) {
   const colorScheme = useColorScheme();
-  const [darkMode, setDarkMode] = useState(colorScheme === 'dark');
+  const [darkMode, setDarkMode] = useState();
 
   const cards = [
     'Redes',
@@ -56,7 +56,7 @@ export default function HomeScreen({ navigation }) {
               { backgroundColor: index === 0 ? '#96D289' : '#AD94DB' },
             ]}
             onPress={() =>
-              alert('Será implementado em breve :)')
+              alert('Será implementado em breve')
             }
           >
             <Text style={[styles.cardText, { color: textColor }]}>{title}</Text>

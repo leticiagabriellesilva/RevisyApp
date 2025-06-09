@@ -2,6 +2,7 @@ import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import HomeScreen from '../Home/HomeScreen';
 import { View, Text } from 'react-native';
+import CustomDrawer from './CustomDrawer';
 
 const Drawer = createDrawerNavigator();
 
@@ -15,11 +16,18 @@ function PlaceholderScreen({ name }) {
 
 export default function DrawerNavigator() {
   return (
-    <Drawer.Navigator initialRouteName="Baralhos" screenOptions={{ headerShown: false }}>
-      <Drawer.Screen name="Baralhos" component={HomeScreen} />
+    <Drawer.Navigator 
+      initialRouteName="Baralhos" 
+      drawerContent={(props) => <CustomDrawer {...props} />}
+      screenOptions={{
+        headerShown: false,
+        drawerStyle: {
+          backgroundColor: '#fff',
+        },
+      }}
+    >
       <Drawer.Screen name="Perfil" component={() => <PlaceholderScreen name="Perfil" />} />
-      <Drawer.Screen name="Configurações" component={() => <PlaceholderScreen name="Configurações" />} />
-      <Drawer.Screen name="Ajuda" component={() => <PlaceholderScreen name="Ajuda" />} />
+      <Drawer.Screen name="Baralhos" component={HomeScreen} />
     </Drawer.Navigator>
   );
 }
