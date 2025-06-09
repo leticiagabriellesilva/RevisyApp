@@ -3,7 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import DrawerNavigator from '../screens/Drawer/DrawerNavigator';
 import CreateCard from '../screens/CreateCard/CreateCard';
 import App from '../screens/ReadCard/ReadCard';
-import HomeScreen from '../screens/Home/HomeScreen';
+import HomeScreen from '../screens/home/HomeScreen';
 
 const Stack = createStackNavigator();
 

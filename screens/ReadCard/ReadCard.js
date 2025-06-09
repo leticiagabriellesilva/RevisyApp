@@ -97,22 +97,14 @@ export default function App({ navigation }) {
     });
 }
 
-  useEffect(() => {
+useEffect(() => {
   if (cards.length === 0 || currentIndex >= cards.length) {
-    Alert.alert(
-      'Parabéns! Você revisou todos os cards!',
-      [
-        {
-          text: 'OK',
-          onPress: () => navigation.navigate('Baralhos'),
-        },
-      ],
-      { cancelable: false }
-    );
-    // Redireciona automaticamente após 1 segundo, caso o usuário não clique
-    const timeout = setTimeout(() => navigation.navigate('Baralhos'), 1000);
-    return () => clearTimeout(timeout);
-  }
+      const timeout = setTimeout(() => navigation.reset({
+        index: 0,
+        routes: [{ name: 'Home' }],
+      }), 1000);
+      return () => clearTimeout(timeout);
+    }
 }, [cards, currentIndex, navigation]);
 
   if (cards.length === 0 || currentIndex >= cards.length) {
@@ -135,11 +127,7 @@ export default function App({ navigation }) {
           onPress2={() => navigation.navigate('Home')}
           style2={styles.image}
         />
-        <IconTextButton
-            icon={require('../../assets/backReadCard.png')}
-            text={/*Nome do baralho*/"Testando"}
-            onPress={() => Alert.alert('Ainda nada','Volta para a aba home')}
-        />
+        
 
         <View style={styles.content}>
 
