@@ -49,5 +49,16 @@ Aplicativo mobile de estudos baseado em flashcards e na metodologia da repetiç�
   ```bash
    npx expo start
   ```
+
+8. **Desenvolvedores e colaboradores**
+
+Front-end: 
+- Leticia Gabrielle Alves da Silva
+- Marlon Rodrigues Fontes
+- Bruno Luan Lee Holanda
+
+Back-end:
+- Luan Lima Spataro
+- Júlio César Cardoso Contreras Muniz
   
 
