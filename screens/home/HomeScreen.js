@@ -48,6 +48,31 @@ export default function HomeScreen({ navigation }) {
     }
   };
 
+  const handleDeleteCard = async (cardId) => {
+    
+    // Usei o confirm pq o alert não estava funcionando
+    const confirmDelete = window.confirm('Tem certeza que deseja excluir este card?');
+    
+    if (confirmDelete) {
+      try {
+        const response = await fetch(`http://localhost:3001/cards/${cardId}`, {
+          method: 'DELETE',
+        });
+                
+        if (response.ok) {
+          setCards(prevCards => prevCards.filter(card => card.id !== cardId));
+          window.alert('Card deletado com sucesso!');
+        } else {
+          window.alert('Não foi possível excluir o card.');
+        }
+      } catch (err) {
+        window.alert('Ocorreu um erro ao excluir o card.');
+      }
+    } else {
+      console.log('Exclusão cancelada.');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <TopBar
@@ -79,6 +104,14 @@ export default function HomeScreen({ navigation }) {
             <Text style={[styles.cardText, { color: textColor }]}>
               {card.pergunta}
             </Text>
+            
+            {/* Botão de deletar */}
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => handleDeleteCard(card.id)}
+            >
+              <Text style={styles.deleteButtonText}>🗑️</Text>
+            </TouchableOpacity>
           </View>
         ))}
       </ScrollView>
