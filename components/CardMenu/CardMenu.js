@@ -41,16 +41,8 @@ export default function CardMenu({
       />
       <Menu.Item
         onPress={() => {
-          const confirmed = window.confirm(
-            "Tem certeza que deseja excluir esse card?"
-          );
-          if (confirmed) {
-            console.log("excluir #####");
-            closeMenu();
-          } else {
-            console.log("não excluir #####");
-            closeMenu();
-          }
+          onDelete();
+          closeMenu();
         }}
         title="Excluir"
       />

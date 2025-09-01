@@ -62,32 +62,6 @@ export default function HomeScreen({ navigation }) {
   };
 
   const handleDeleteCard = async (cardId) => {
-    
-    // Usei o confirm pq o alert não estava funcionando
-    const confirmDelete = window.confirm('Tem certeza que deseja excluir este card?');
-    
-    if (confirmDelete) {
-      try {
-        const response = await fetch(`http://localhost:3001/cards/${cardId}`, {
-          method: 'DELETE',
-        });
-                
-        if (response.ok) {
-          setCards(prevCards => prevCards.filter(card => card.id !== cardId));
-          window.alert('Card deletado com sucesso!');
-        } else {
-          window.alert('Não foi possível excluir o card.');
-        }
-      } catch (err) {
-        window.alert('Ocorreu um erro ao excluir o card.');
-      }
-    } else {
-      console.log('Exclusão cancelada.');
-    }
-  };
-
-  const handleDeleteCard = async (cardId) => {
-    
     // Usei o confirm pq o alert não estava funcionando
     const confirmDelete = window.confirm('Tem certeza que deseja excluir este card?');
     
@@ -130,37 +104,50 @@ export default function HomeScreen({ navigation }) {
       >
         <Text style={styles.reviewButtonText}>Iniciar Revisão</Text>
       </TouchableOpacity>
-
-      <ScrollView contentContainerStyle={styles.scroll}>
-        {cards.map((card, index) => (
-          <View
-            key={card.id ?? index}
-            style={[
-              styles.card,
-              {
-                backgroundColor: "#AD94DB",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "flex-start",
-                position: "relative",
-              },
-            ]}
-          >
-            <Text style={[styles.cardText, { color: textColor, flex: 1, textAlign: "center" }]}>
-              {card.pergunta}
-            </Text>
-            
-            {/* Botão de deletar */}
-            <TouchableOpacity
-              style={styles.deleteButton}
-              onPress={() => handleDeleteCard(card.id)}
+        <ScrollView contentContainerStyle={styles.scroll}>
+          {cards.map((card, index) => (
+            <View
+              key={card.id ?? index}
+              style={[
+                styles.card,
+                {
+                  backgroundColor: "#AD94DB",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "flex-start",
+                  position: "relative",
+                },
+              ]}
             >
-              <Text style={styles.deleteButtonText}>🗑️</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
-      </ScrollView>
-
+              <Text
+                style={[
+                  styles.cardText,
+                  { color: textColor, flex: 1, textAlign: "center" },
+                ]}
+              >
+                {card.pergunta}
+              </Text>
+              {/* Menu de opções no canto superior direito */}
+              <View style={{ position: "absolute", top: 8, right: 8 }}>
+                <CardMenu
+                  visible={menuVisibleId === card.id}
+                  openMenu={() => openMenu(card.id)}
+                  closeMenu={closeMenu}
+                  onEdit={() => handleEdit(card.id)}
+                  onDelete={() => handleDeleteCard(card.id)}
+                  textColor={textColor}
+                />
+              </View>
+              {/* Remova o botão de deletar */}
+              {/* <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={() => handleDeleteCard(card.id)}
+              >
+                <Text style={styles.deleteButtonText}>🗑️</Text>
+              </TouchableOpacity> */}
+            </View>
+          ))}
+        </ScrollView>
       <TouchableOpacity
         style={styles.fab}
         onPress={() => navigation.navigate("CreateCard")}
