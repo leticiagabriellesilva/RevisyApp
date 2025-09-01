@@ -7,7 +7,7 @@ module.exports = {
             return res.status(201).json(newCard);
         }
         catch(error){
-            if (error.message.includes('obrigat처rio')){
+            if (error.message.includes('obrigatório')){
                 return res.status(400).json({ error: error.message});
             }
 
@@ -34,7 +34,7 @@ module.exports = {
             return res.json(card);
         }
         catch(error){
-            if (error.message.includes('n찾o encontrado')){
+            if (error.message.includes('não encontrado')){
                 return res.status(404).json({ error: error.message });
             }
 
@@ -50,7 +50,7 @@ module.exports = {
             return res.json(cardUpdated);
         }
         catch(error){
-            if (error.message.includes('n찾o informado')){
+            if (error.message.includes('não informado')){
                 return res.status(400).json( { error: error.message });
             }
 
@@ -66,12 +66,12 @@ module.exports = {
             return res.status(204).send(); 
         }
         catch(error){
-            if (error.message.includes('n찾o informado')){
+            if (error.message.includes('não informado')){
                 return res.status(400).json({error: error.message })
             }
 
             console.error(error);
-            return res.lstatus(500).json( { error: 'Erro ao deletar card.' });
+            return res.status(500).json( { error: 'Erro ao deletar card.' });
         }
     },
 

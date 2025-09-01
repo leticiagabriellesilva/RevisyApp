@@ -18,10 +18,33 @@ export default StyleSheet.create({
     marginBottom: 20,
     alignItems: 'center',
     elevation: 4,
+    position: 'relative',
   },
   cardText: {
     fontSize: 18,
     fontWeight: 'normal',
+  },
+  deleteButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    width: 35,
+    height: 35,
+    borderRadius: 17.5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  deleteButtonText: {
+    fontSize: 16,
   },
   icon: {
     width: 60,

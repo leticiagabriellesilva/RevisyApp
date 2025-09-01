@@ -18,7 +18,7 @@ module.exports = {
 
     getCardById: async (id) => {
         return prisma.card.findUnique({
-            where: { id },
+            where: { id: parseInt(id) },
         });
     },
 
@@ -29,7 +29,7 @@ module.exports = {
     if (typeof updateFields.dificuldade !== 'undefined') updateData.dificuldade = !!updateFields.dificuldade;
 
     return prisma.card.update({
-        where: { id },
+        where: { id: parseInt(id) },
         data: updateData,
     });
 },
@@ -41,7 +41,7 @@ module.exports = {
 
     deleteCardById: async (id) => {
         return prisma.card.delete({
-            where: { id },
+            where: { id: parseInt(id) },
         })
     }
 }
