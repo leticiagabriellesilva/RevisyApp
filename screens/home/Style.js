@@ -7,11 +7,13 @@ export default StyleSheet.create({
     paddingVertical: 10,
     alignItems: 'center',
   },
+
   headerText: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#122021',
   },
+
   card: {
     padding: 70,
     borderRadius: 20,
@@ -20,10 +22,12 @@ export default StyleSheet.create({
     elevation: 4,
     position: 'relative',
   },
+
   cardText: {
     fontSize: 18,
     fontWeight: 'normal',
   },
+
   deleteButton: {
     position: 'absolute',
     top: 10,
@@ -43,17 +47,21 @@ export default StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
   },
+
   deleteButtonText: {
     fontSize: 16,
   },
+
   icon: {
     width: 60,
     height: 60,
   },
+
   icon2: {
     width: 50,
     height: 50,
   },
+
   fab: {
     position: 'absolute',
     bottom: 30,
@@ -65,10 +73,12 @@ export default StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   fabText: {
     fontSize: 28,
     color: '#122021',
   },
+
   reviewButton: {
   backgroundColor: '#AD94DB',
   paddingVertical: 10,
@@ -78,9 +88,11 @@ export default StyleSheet.create({
   marginTop: 15,
   marginBottom: 10,
 },
+
 reviewButtonText: {
   color: 'white',
   fontSize: 18,
   fontWeight: 'normal',
 },
+
 });

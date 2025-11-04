@@ -8,7 +8,7 @@ import Deck from '../../components/Deck/Deck';
 import VerMaisButton from '../../components/Buttons/VerMaisButton';
 import EditProfileButton from '../../components/Buttons/EditProfileButton';
 
-export default function ProfileScreen() {
+export default function ProfileScreen({ navigation }) {
     return (
         <View style={styles.container}>
             <StatusBar style="light" />
