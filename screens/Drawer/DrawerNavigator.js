@@ -5,7 +5,7 @@ import { View, Text } from 'react-native';
 import CustomDrawer from './CustomDrawer';
 import ProfileScreen from '../profile/ProfileScreen';
 import CreateCard from '../CreateCard/CreateCard';
-import App from '../ReadCard/ReadCard';
+import App from '../ReadCard/ReadCardEspacada.js';
 
 const Drawer = createDrawerNavigator();
 

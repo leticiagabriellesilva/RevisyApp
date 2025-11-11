@@ -23,7 +23,7 @@ module.exports = {
         }
         catch(error){
             console.log(error);
-            return res.status(500).json({ error: 'Erro ao litar cards.'});
+            return res.status(500).json({ error: 'Erro ao listar cards.'});
         }
     },
 
