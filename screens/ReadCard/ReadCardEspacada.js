@@ -7,7 +7,7 @@ import ButtonImage from '../../components/ButtonImage/ButtonImage';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 //Tem que passar o baralho para entrar nessa tela.
-export default function App({ navigation }) {
+export default function AppEspacada({ navigation }) {
   const API_URL = 'http://localhost:3001';
   const [cards, setCards] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -92,27 +92,24 @@ export default function App({ navigation }) {
 
   function calculaEspacamento(prevReps, prevInterval, prevEF, quality) {
     const EF = Math.max(1.3, prevEF - 0.8 + 0.28 * quality - 0.02 * quality * quality);
-    let reps = prevReps;
-    let intervalMin = prevInterval;
+    let reps;
+    let intervalMin;
 
     if (quality < 3) {
+      // Qualidade 1 (Esqueci) ou 2 (Difícil)
       reps = 0;
-      intervalMin = 10; // 10 minutos
-    } else if (quality >= 4) {
-      if (prevReps === 0 || prevReps === 1) {
+      intervalMin = quality === 1 ? 0 : 10; // imediata ou breve reforço
+    } else {
+      // Qualidade 3 e segue progressão multiplicando pelo EF
+      if (prevReps === 0) {
+        reps = 1;
+        intervalMin = 1440; // 1 dia
+      } else if (prevReps === 1) {
         reps = 2;
-        intervalMin = 2880; // 2 dias
+        intervalMin = 8640; // 6 dias
       } else {
         reps = prevReps + 1;
-        const base = prevInterval > 0 ? prevInterval : 2880;
-        intervalMin = Math.round(base * EF);
-      }
-    } else {
-      reps = prevReps + 1;
-      if (reps === 1) intervalMin = 30; // 30 minutos
-      else if (reps === 2) intervalMin = 2880; // 2 dias
-      else {
-        const base = prevInterval > 0 ? prevInterval : 2880;
+        const base = prevInterval > 0 ? prevInterval : 8640; // 6 dias
         intervalMin = Math.round(base * EF);
       }
     }
@@ -139,7 +136,8 @@ export default function App({ navigation }) {
     if (!current) return;
     const now = new Date();
     const { EF, reps, intervalMin } = calculaEspacamentoParaCard(current, quality);
-    const next = new Date(now.getTime() + intervalMin * 60 * 1000);
+    // Intervalo 0 o nextReview fica nulo para continuar na fila
+    const next = intervalMin === 0 ? null : new Date(now.getTime() + intervalMin * 60 * 1000);
 
     const payload = {
       repeticoes: reps,
@@ -147,7 +145,7 @@ export default function App({ navigation }) {
       fatorFacilidade: EF,
       qualidade: quality,
       lastReview: now.toISOString(),
-      nextReview: next.toISOString(),
+      nextReview: next ? next.toISOString() : null,
     };
 
     fetch(`${API_URL}/cards/${current.id}`, {
@@ -168,8 +166,11 @@ export default function App({ navigation }) {
             }
             return copy;
           });
+        } else if (quality === 2) {
+          // Difícil: sai da sessão (volta depois de 10 min)
+          setCards(prev => prev.filter(c => c.id !== current.id));
         } else {
-          // Difícil, Médio, Fácil: sai da sessão atual
+          // Médio e Fácil: sai da sessão para intervalos maiores
           setCards(prev => prev.filter(c => c.id !== current.id));
         }
         setCurrentIndex(0);

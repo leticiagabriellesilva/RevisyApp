@@ -95,6 +95,13 @@ export default function HomeScreen({ navigation }) {
         <Text style={styles.reviewButtonText}>Iniciar Revisão</Text>
       </TouchableOpacity>
 
+      <TouchableOpacity
+        style={styles.reviewButton}
+        onPress={() => navigation.navigate('AppEspacada', { cards })}
+      >
+        <Text style={styles.reviewButtonText}>Iniciar Revisão Espaçada</Text>
+      </TouchableOpacity>
+
       <ScrollView contentContainerStyle={styles.scroll}>
         {cards.map((card, index) => (
           <View
