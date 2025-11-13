@@ -100,16 +100,18 @@ export default function AppEspacada({ navigation }) {
       reps = 0;
       intervalMin = quality === 1 ? 0 : 10; // imediata ou breve reforço
     } else {
-      // Qualidade 3 e segue progressão multiplicando pelo EF
+      // Qualidade 3 (Médio) ou 5 (Fácil) - e segue progressão multiplicando pelo EF
       if (prevReps === 0) {
         reps = 1;
-        intervalMin = 1440; // 1 dia
+        // Médio: 1 dia (1440 min) e Fácil: 2 dias (2880 min)
+        intervalMin = quality >= 5 ? 2880 : 1440;
       } else if (prevReps === 1) {
         reps = 2;
-        intervalMin = 8640; // 6 dias
+        // Médio: 6 dias (8640 min) e Fácil: 10 dias (14400 min)
+        intervalMin = quality >= 5 ? 14400 : 8640;
       } else {
         reps = prevReps + 1;
-        const base = prevInterval > 0 ? prevInterval : 8640; // 6 dias
+        const base = prevInterval > 0 ? prevInterval : (quality >= 5 ? 14400 : 8640);
         intervalMin = Math.round(base * EF);
       }
     }
@@ -243,7 +245,7 @@ export default function AppEspacada({ navigation }) {
             <Text>Nível de dificuldade</Text>
             <ButtonImage
               image={require('../../assets/informacoes.png')}
-              onPress={() => Alert.alert('Nível de dificuldade', 'Isso define quanto tempo você precisa entre uma revisão e outra. Recomendado: \nDifícil - 10 minutos \nMédio - 30 min \nFácil - 2 dias')}
+              onPress={() => Alert.alert('Nível de dificuldade', 'Isso define quanto tempo você precisa entre uma revisão e outra:\n\n• Esqueci - Revisar novamente nesta sessão\n• Difícil - 10 minutos\n• Médio - 1 dia (primeira vez) ou 6 dias (segunda vez)\n• Fácil - 2 dias (primeira vez) ou 10 dias (segunda vez)\n\nDepois o intervalo aumenta automaticamente.')}
               style={styles.imageInformationButtons}
             />
           </View>
