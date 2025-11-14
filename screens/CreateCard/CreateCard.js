@@ -4,8 +4,8 @@ import { Picker } from '@react-native-picker/picker';
 import TopBar from '../../components/TopBar/TopBar';
 import CardInput from '../../components/CardInput/CardInput';
 
-export default function App() {
-  const [baralho, setBaralho] = useState('Redes');
+export default function CreateCardScreen({ route, navigation }) {
+  const { baralhoId, onCardCreated } = route.params || {};
   const [pergunta, setPergunta] = useState('');
   const [resposta, setResposta] = useState('');
 
@@ -14,25 +14,12 @@ export default function App() {
     <View style={styles.container}>
       <TopBar
         image1={require('../../assets/backIcon.png')}
-        onPress1={() => navigation.navigate('Home')}
+        onPress1={() => navigation.goBack()}
         style1={styles.image}
         image2={require('../../assets/confirmIcon.png')}
-        onPress2={() => navigation.navigate('Home')}
+        onPress2={() => navigation.goBack()}
         style2={styles.image}
       />
-
-      {/*<View style={styles.pickerContainer}>
-        <Text style={styles.label}>Baralho</Text>
-        <Picker
-          selectedValue={baralho}
-          onValueChange={(itemValue) => setBaralho(itemValue)}
-          style={styles.picker}
-        >
-          <Picker.Item label="Redes" value="Redes" />
-          <Picker.Item label="Algoritmos" value="Algoritmos" />
-          <Picker.Item label="Banco de Dados" value="Banco de Dados" />
-        </Picker>
-      </View>*/}
 
       <View style={styles.cardContainer}>
         <Text style={styles.title}>FRENTE</Text>
@@ -56,26 +43,44 @@ export default function App() {
       <TouchableOpacity
         style={styles.button}
         onPress={async () => {
-
           if (!pergunta || !resposta) {
             Alert.alert('Erro', 'Preencha a pergunta e a resposta!');
             return;
           }
+
+          if (!baralhoId) {
+            Alert.alert('Erro', 'Baralho não especificado!');
+            return;
+          }
+
           try {
-            console.log('Antes do fetch');
             const response = await fetch('http://localhost:3001/cards/', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ pergunta, resposta, dificuldade: true })
+              body: JSON.stringify({ 
+                pergunta, 
+                resposta, 
+                dificuldade: true,
+                baralhoId: baralhoId,
+                repeticoes: 0,
+                intervalo: 0,
+                fatorFacilidade: 2.5,
+                qualidade: 0,
+                nextReview: new Date().toISOString()
+              })
             });
-            const respText = await response.text();
 
             if (response.ok) {
               setPergunta('');
               setResposta('');
               Alert.alert('Sucesso', 'Card criado com sucesso!');
+              if (onCardCreated) {
+                onCardCreated();
+              }
+              navigation.goBack();
             } else {
-              Alert.alert('Erro', 'Não foi possível criar o card.');
+              const errorData = await response.json();
+              Alert.alert('Erro', errorData.error || 'Não foi possível criar o card.');
             }
           } catch (err) {
             console.log('Erro:', err);

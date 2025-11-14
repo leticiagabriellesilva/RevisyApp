@@ -7,6 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Baralho {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  createdAt DateTime @default(now())
+  cards     Card[]
+}
+
 model Card {
   id              Int         @id @default(autoincrement())
   pergunta        String
@@ -20,4 +27,6 @@ model Card {
   updatedAt       DateTime    @updatedAt
   lastReview      DateTime?
   nextReview      DateTime    @default(now())
+  baralhoId          Int
+  baralho            Baralho        @relation(fields: [baralhoId], references: [id], onDelete: Cascade)
 }

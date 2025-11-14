@@ -83,6 +83,38 @@ module.exports = {
         console.error(error);
         return res.status(500).json({ error: error.message || 'Erro ao atualizar dificuldade dos cards.' });
     }
-}
+},
+
+    async getCardsByBaralhoId(req, res){
+        try{
+            const { baralhoId } = req.params;
+            const cards = await cardService.getCardsByBaralhoId(baralhoId);
+            return res.json(cards);
+        }
+        catch(error){
+            if (error.message.includes('não informado')){
+                return res.status(400).json({ error: error.message });
+            }
+
+            console.error(error);
+            return res.status(500).json({ error: 'Erro ao obter cards do baralho.'});
+        }
+    },
+
+    async getCardsToReviewByBaralhoId(req, res){
+        try{
+            const { baralhoId } = req.params;
+            const cards = await cardService.getCardsToReviewByBaralhoId(baralhoId);
+            return res.json(cards);
+        }
+        catch(error){
+            if (error.message.includes('não informado')){
+                return res.status(400).json({ error: error.message });
+            }
+
+            console.error(error);
+            return res.status(500).json({ error: 'Erro ao obter cards para revisão.'});
+        }
+    }
 
 };

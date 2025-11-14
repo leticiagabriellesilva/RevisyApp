@@ -69,12 +69,12 @@ export default StyleSheet.create({
         fontSize: 14
     },
 
-    decksTitle: {
+    baralhosTitle: {
         paddingBottom: 5,
         fontSize: 20,
     },
 
-    decksContainer: {
+    baralhosContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-evenly',
@@ -83,13 +83,13 @@ export default StyleSheet.create({
         // marginLeft: 17
     },
 
-    deckItem: {
+    baralhoItem: {
         // paddingLeft: 30,
         // alignItems: 'center',
         // width: 100,
     },
 
-    deckScore: {
+    baralhoScore: {
         fontSize: 12,
         color: '#333',
         textAlign: 'center',

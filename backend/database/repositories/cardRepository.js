@@ -2,7 +2,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 module.exports = {
-    createCard: async ({ pergunta, resposta, dificuldade, repeticoes, intervalo, fatorFacilidade, qualidade, lastReview, nextReview }) => {
+    createCard: async ({ pergunta, resposta, dificuldade, repeticoes, intervalo, fatorFacilidade, qualidade, lastReview, nextReview, baralhoId }) => {
         return prisma.card.create({
             data: {
                 pergunta,
@@ -14,6 +14,7 @@ module.exports = {
                 qualidade,
                 lastReview,
                 nextReview,
+                baralhoId: parseInt(baralhoId),
             },
         });
     },
@@ -56,5 +57,23 @@ module.exports = {
         return prisma.card.delete({
             where: { id: parseInt(id) }
         })
+    },
+
+    getCardsByBaralhoId: async (baralhoId) => {
+        return prisma.card.findMany({
+            where: { baralhoId: parseInt(baralhoId) }
+        });
+    },
+
+    getCardsToReviewByBaralhoId: async (baralhoId) => {
+        const now = new Date();
+        return prisma.card.findMany({
+            where: {
+                baralhoId: parseInt(baralhoId),
+                nextReview: {
+                    lte: now
+                }
+            }
+        });
     }
 }

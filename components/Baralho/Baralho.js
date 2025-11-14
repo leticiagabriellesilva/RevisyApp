@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-export default function Deck({title, author, onPress}) {
+export default function Baralho({title, author, onPress}) {
     return (
         <TouchableOpacity onPress={onPress} style={styles.card}>
                 <Text style={styles.title}>{title}</Text>

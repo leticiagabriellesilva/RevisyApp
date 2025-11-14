@@ -7,7 +7,10 @@ app.use(cors());
 app.use(express.json());
 
 const cardRoutes = require('./routes/cardRoutes');
+const baralhoRoutes = require('./routes/baralhoRoutes');
+
 app.use('/cards', cardRoutes);
+app.use('/baralhos', baralhoRoutes);
 
 app.get('/', (req, res) => {
   res.send('API rodando!');
