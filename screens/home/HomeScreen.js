@@ -5,10 +5,13 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  Modal,
+  StyleSheet,
   useColorScheme
 } from 'react-native';
 import TopBar from '../../components/TopBar/TopBar';
 import styles from './Style';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default function HomeScreen({ navigation }) {
   const colorScheme = useColorScheme();
@@ -16,6 +19,8 @@ export default function HomeScreen({ navigation }) {
   const textColor = darkMode ? '#fff' : '#000';
 
   const [cards, setCards] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedCardId, setSelectedCardId] = useState(null);
 
   useEffect(() => {
     async function fetchCards() {
@@ -73,6 +78,15 @@ export default function HomeScreen({ navigation }) {
     }
   };
 
+  const openMenu = (id) => {
+    setSelectedCardId(id);
+    setModalVisible(true);
+  };
+  const closeMenu = () => {
+    setModalVisible(false);
+    setSelectedCardId(null);
+  };
+
   return (
     <View style={styles.container}>
       <TopBar
@@ -99,22 +113,46 @@ export default function HomeScreen({ navigation }) {
         {cards.map((card, index) => (
           <View
             key={card.id ?? index}
-            style={[styles.card, { backgroundColor: '#AD94DB' }]}
+            style={[styles.card, { backgroundColor: '#AD94DB', position: 'relative' }]}
           >
+            <TouchableOpacity
+              style={[styles.deleteButton, { position: 'absolute', top: 8, right: 8, zIndex: 10, backgroundColor: 'transparent' }]}
+              onPress={() => openMenu(card.id)}
+            >
+              <MaterialCommunityIcons name="dots-vertical" size={28} color="#fff" />
+            </TouchableOpacity>
             <Text style={[styles.cardText, { color: textColor }]}>
               {card.pergunta}
             </Text>
-            
-            {/* Botão de deletar */}
-            <TouchableOpacity
-              style={styles.deleteButton}
-              onPress={() => handleDeleteCard(card.id)}
-            >
-              <Text style={styles.deleteButtonText}>🗑️</Text>
-            </TouchableOpacity>
           </View>
         ))}
       </ScrollView>
+
+      {/* Modal customizado para menu */}
+      <Modal
+        visible={modalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={closeMenu}
+      >
+        <TouchableOpacity style={customMenuStyles.overlay} activeOpacity={1} onPress={closeMenu}>
+          <View style={customMenuStyles.menuBox}>
+            <MaterialCommunityIcons name="dots-vertical" size={28} color="#fff" style={{ alignSelf: 'flex-end', marginBottom: 16 }} />
+            <TouchableOpacity
+              style={customMenuStyles.menuItem}
+              onPress={() => { closeMenu(); /* ação editar */ }}
+            >
+              <Text style={customMenuStyles.menuText}>Editar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={customMenuStyles.menuItem}
+              onPress={() => { closeMenu(); handleDeleteCard(selectedCardId); }}
+            >
+              <Text style={customMenuStyles.menuText}>Excluir</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
 
       <TouchableOpacity
         style={styles.fab}
@@ -125,3 +163,31 @@ export default function HomeScreen({ navigation }) {
     </View>
   );
 }
+
+const customMenuStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  menuBox: {
+    backgroundColor: '#AD94DB',
+    borderRadius: 24,
+    padding: 32,
+    minWidth: 200,
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+  },
+  menuItem: {
+    marginVertical: 12,
+  },
+  menuText: {
+    color: '#fff',
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+});

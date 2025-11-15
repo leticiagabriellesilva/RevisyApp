@@ -121,10 +121,10 @@ export default function App({ navigation }) {
       {/* Precisa incrementar o topbar igual a tela home (Leticia) */}
       <TopBar
         image1={require('../../assets/backIcon.png')}
-        onPress1={() => navigation.navigate('Home')}
+        onPress1={() => navigation.pop()}
         style1={styles.image}
         image2={require('../../assets/confirmIcon.png')}
-        onPress2={() => navigation.navigate('Home')}
+        onPress2={() => navigation.pop()}
         style2={styles.image}
       />
 
@@ -261,3 +261,4 @@ const styles = StyleSheet.create({
     fontSize: 18
   }
 });
+

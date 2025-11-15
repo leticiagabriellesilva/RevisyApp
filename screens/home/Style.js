@@ -24,7 +24,7 @@ export default StyleSheet.create({
     fontSize: 18,
     fontWeight: 'normal',
   },
-  deleteButton: {
+  optionButton: {
     position: 'absolute',
     top: 10,
     right: 10,
