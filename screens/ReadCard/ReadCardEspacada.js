@@ -1,16 +1,17 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { Animated, Dimensions, StyleSheet, Text, TouchableWithoutFeedback, View, Alert, TouchableOpacity } from 'react-native';
+import { Dimensions, StyleSheet, Text, View, Alert, TouchableOpacity } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import TopBar from '../../components/TopBar/TopBar';
-import IconTextButton from '../../components/IconTextButton/IconTextButton';
+import CardComponent from '../../components/Card/CardComponent';
 import ButtonImage from '../../components/ButtonImage/ButtonImage';
-import Ionicons from '@expo/vector-icons/Ionicons';
 
 //Tem que passar o baralho para entrar nessa tela.
 export default function AppEspacada({ navigation }) {
   const API_URL = 'http://localhost:3001';
   const [cards, setCards] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const cardRef = useRef(null);
 
   const carregaCardsAFazer = useCallback(() => {
     fetch(`${API_URL}/cards`)
@@ -38,47 +39,6 @@ export default function AppEspacada({ navigation }) {
       return () => {};
     }, [carregaCardsAFazer])
   );
-
-  const [isFlipped, setIsFlipped] = useState(false);
-  const flipAnimation = useRef(new Animated.Value(0)).current
-
-  const frontInterpolate = flipAnimation.interpolate({
-    inputRange: [0, 180],
-    outputRange: ['0deg', '180deg'],
-  });
-
-  const flipToFrontStyle = {
-    transform: [{ rotateY: frontInterpolate }]
-  };
-
-
-  const backInterpolate = flipAnimation.interpolate({
-    inputRange: [0, 180],
-    outputRange: ['180deg', '360deg'],
-  });
-
-  const flipToBackStyle = {
-    transform: [{ rotateY: backInterpolate }]
-  };
-
-  const flipCard = () => {
-    if (isFlipped) {
-      Animated.spring(flipAnimation, {
-        toValue: 0,
-        friction: 8,
-        tension: 10,
-        useNativeDriver: true,
-      }).start();
-    } else {
-      Animated.spring(flipAnimation, {
-        toValue: 180,
-        friction: 8,
-        tension: 10,
-        useNativeDriver: true,
-      }).start();
-    }
-    setIsFlipped(!isFlipped);
-  };
 
   function tempoParaTexto(mins){
     if (mins < 60) return `${mins} min`;
@@ -176,14 +136,8 @@ export default function AppEspacada({ navigation }) {
           setCards(prev => prev.filter(c => c.id !== current.id));
         }
         setCurrentIndex(0);
-        if (isFlipped) {
-          Animated.spring(flipAnimation, {
-            toValue: 0,
-            friction: 8,
-            tension: 10,
-            useNativeDriver: true,
-          }).start(() => setIsFlipped(false));
-        }
+        // Reseta o card para a frente
+        setIsFlipped(false);
       })
       .catch(err => console.error('Erro ao atualizar card:', err));
   }
@@ -199,10 +153,8 @@ export default function AppEspacada({ navigation }) {
     );
   }
 
-
   return (
     <View style={styles.container}>
-      {/* Precisa incrementar o topbar igual a tela home (Leticia) */}
       <TopBar
         image1={require('../../assets/backIcon.png')}
         onPress1={() => navigation.navigate('Home')}
@@ -221,24 +173,12 @@ export default function AppEspacada({ navigation }) {
         style2={styles.image}
       />
 
-
       <View style={styles.content}>
-
-        <View style={styles.showCard}>
-          <TouchableWithoutFeedback onPress={flipCard}>
-            <View style={styles.cardContainer}>
-              {/*PERGUNTA*/}
-              <Animated.View style={[styles.front, styles.card, flipToFrontStyle]}>
-                <Text style={styles.text}>{cards[currentIndex]?.pergunta || 'Sem perguntas'}</Text>
-              </Animated.View>
-
-              {/*RESPOSTA*/}
-              <Animated.View style={[styles.back, styles.card, flipToBackStyle]}>
-                <Text style={styles.text}>{cards[currentIndex]?.resposta || 'Sem resposta'}</Text>
-              </Animated.View>
-            </View>
-          </TouchableWithoutFeedback>
-        </View>
+        <CardComponent 
+          pergunta={cards[currentIndex]?.pergunta}
+          resposta={cards[currentIndex]?.resposta}
+          ref={cardRef}
+        />
 
         <View style={styles.answer}>
           <View style={styles.informationTitle}>
@@ -253,7 +193,6 @@ export default function AppEspacada({ navigation }) {
             <TouchableOpacity style={styles.answerButton}
               onPress={() => {
                 defineNota(1); // Esqueci
-                if (isFlipped) flipCard();
               }}
             >
               <Text style={styles.answerTexts}>Esqueci</Text>
@@ -263,9 +202,7 @@ export default function AppEspacada({ navigation }) {
             <TouchableOpacity style={styles.answerButton}
               onPress={() => {
                 defineNota(2); // Difícil
-                if (isFlipped) flipCard();
-              }
-              }
+              }}
             >
               <Text style={styles.answerTexts}>Difícil</Text>
               <Text style={styles.answerHint}>{calculaProximaData(2)}</Text>
@@ -274,17 +211,15 @@ export default function AppEspacada({ navigation }) {
             <TouchableOpacity style={styles.answerButton}
               onPress={() => {
                 defineNota(3); // Médio
-                if (isFlipped) flipCard();
               }}
             >
               <Text style={styles.answerTexts}>Médio</Text>
               <Text style={styles.answerHint}>{calculaProximaData(3)}</Text>
             </TouchableOpacity>
 
-              <TouchableOpacity style={styles.answerButton}
+            <TouchableOpacity style={styles.answerButton}
               onPress={() => {
                 defineNota(5); // Fácil
-                if (isFlipped) flipCard();
               }}
             >
               <Text style={styles.answerTexts}>Fácil</Text>
@@ -292,7 +227,6 @@ export default function AppEspacada({ navigation }) {
             </TouchableOpacity>
           </View>
         </View>
-
       </View>
     </View>
   );
@@ -308,32 +242,6 @@ const styles = StyleSheet.create({
   image: {
     width: 50,
     height: 50,
-  },
-  showCard: {
-    alignItems: 'center',
-    marginTop: 25,
-  },
-  cardContainer: {
-    width: width - 50,
-    height: height / 3,
-  },
-  front: {
-    backgroundColor: '#E2C2FB',
-  },
-  back: {
-    backgroundColor: '#96D289',
-  },
-  card: {
-    width: width - 50,
-    height: height / 3,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 10,
-    position: 'absolute',
-    backfaceVisibility: 'hidden',
-  },
-  text: {
-    fontSize: 20
   },
   content: {
     flex: 1,
