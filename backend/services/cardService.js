@@ -5,6 +5,9 @@ module.exports = {
         if (!req.pergunta || !req.resposta){
             throw new Error('Pergunta e resposta são obrigatórios.');
         }
+        if (!req.baralhoId) {
+            throw new Error('Baralho é obrigatório.');
+        }
 
         return cardRepository.createCard(req);
     },
@@ -33,4 +36,14 @@ module.exports = {
         if (!id) throw new Error('ID do card não informado.');
         return cardRepository.deleteCardById(id);
     },
+
+    async getCardsByBaralhoId(baralhoId){
+        if (!baralhoId) throw new Error('ID do baralho não informado.');
+        return cardRepository.getCardsByBaralhoId(baralhoId);
+    },
+
+    async getCardsToReviewByBaralhoId(baralhoId){
+        if (!baralhoId) throw new Error('ID do baralho não informado.');
+        return cardRepository.getCardsToReviewByBaralhoId(baralhoId);
+    }
 };

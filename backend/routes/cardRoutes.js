@@ -3,6 +3,8 @@ const router = express.Router();
 const cardController = require('../controllers/cardController');
 
 router.put('/dificuldade', cardController.updateAllCardsDifficulty);
+router.get('/baralho/:baralhoId', cardController.getCardsByBaralhoId);
+router.get('/baralho/:baralhoId/review', cardController.getCardsToReviewByBaralhoId);
 router.post('/', cardController.createCard);
 router.get('/', cardController.getAllCards);
 router.get('/:id', cardController.getCardById);

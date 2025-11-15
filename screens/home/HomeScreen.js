@@ -18,23 +18,25 @@ export default function HomeScreen({ navigation }) {
   const [darkMode, setDarkMode] = useState(colorScheme === 'dark');
   const textColor = darkMode ? '#fff' : '#000';
 
+  const [baralhos, setBaralhos] = useState([]);
   const [cards, setCards] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState(null);
 
   useEffect(() => {
-    async function fetchCards() {
-      try {
-        const response = await fetch('http://localhost:3001/cards');
-        const data = await response.json();
-        setCards(data);
-      } catch (err) {
-        console.error(err);
-        Alert.alert('Erro', 'Não foi possível carregar os cards.');
-      }
-    }
-    fetchCards();
+    fetchBaralhos();
   }, []);
+
+  const fetchBaralhos = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/baralhos/status');
+      const data = await response.json();
+      setBaralhos(data);
+    } catch (err) {
+      console.error(err);
+      Alert.alert('Erro', 'Não foi possível carregar os baralhos.');
+    }
+  };
 
   const handleResetDificuldade = async () => {
     try {
@@ -43,8 +45,7 @@ export default function HomeScreen({ navigation }) {
       });
       if (response.ok) {
         alert('Dificuldade dos cards reinicializada!');
-        const data = await response.json();
-        setCards(data);
+        fetchBaralhos(); // Atualiza a lista de baralhos
       } else {
         alert('Erro', 'Não foi possível reinicializar as dificuldades.');
       }
@@ -53,29 +54,34 @@ export default function HomeScreen({ navigation }) {
     }
   };
 
-  const handleDeleteCard = async (cardId) => {
-    
-    // Usei o confirm pq o alert não estava funcionando
-    const confirmDelete = window.confirm('Tem certeza que deseja excluir este card?');
+  const handleDeleteBaralho = async (baralhoId) => {
+    const confirmDelete = window.confirm('Tem certeza que deseja excluir este baralho e todos os seus cards?');
     
     if (confirmDelete) {
       try {
-        const response = await fetch(`http://localhost:3001/cards/${cardId}`, {
+        const response = await fetch(`http://localhost:3001/baralhos/${baralhoId}`, {
           method: 'DELETE',
         });
                 
         if (response.ok) {
-          setCards(prevCards => prevCards.filter(card => card.id !== cardId));
-          window.alert('Card deletado com sucesso!');
+          setBaralhos(prevBaralhos => prevBaralhos.filter(baralho => baralho.id !== baralhoId));
+          window.alert('Baralho deletado com sucesso!');
         } else {
-          window.alert('Não foi possível excluir o card.');
+          window.alert('Não foi possível excluir o baralho.');
         }
       } catch (err) {
-        window.alert('Ocorreu um erro ao excluir o card.');
+        window.alert('Ocorreu um erro ao excluir o baralho.');
       }
-    } else {
-      console.log('Exclusão cancelada.');
     }
+  };
+
+  const openMenu = (id) => {
+    setSelectedCardId(id);
+    setModalVisible(true);
+  };
+  const closeMenu = () => {
+    setModalVisible(false);
+    setSelectedCardId(null);
   };
 
   const openMenu = (id) => {
@@ -99,64 +105,44 @@ export default function HomeScreen({ navigation }) {
       />
 
       <View style={styles.headerBox}>
-        <Text style={styles.headerText}>Cards</Text>
+        <Text style={styles.headerText}>Baralhos</Text>
       </View>
 
-      <TouchableOpacity
-        style={styles.reviewButton}
-        onPress={() => navigation.navigate('App', { cards })}
-      >
-        <Text style={styles.reviewButtonText}>Iniciar Revisão</Text>
-      </TouchableOpacity>
-
       <ScrollView contentContainerStyle={styles.scroll}>
-        {cards.map((card, index) => (
-          <View
-            key={card.id ?? index}
-            style={[styles.card, { backgroundColor: '#AD94DB', position: 'relative' }]}
+        {baralhos.map((baralho, index) => (
+          <TouchableOpacity
+            key={baralho.id ?? index}
+            style={[
+              styles.card, 
+              { backgroundColor: baralho.hasCardsToReview ? '#AD94DB' : '#96D289' }
+            ]}
+            onPress={() => navigation.navigate('BaralhoCards', { baralhoId: baralho.id, baralhoName: baralho.nome })}
           >
+            <View style={styles.baralhoInfo}>
+              <Text style={[styles.cardText, { color: textColor }]}>
+                {baralho.nome}
+              </Text>
+              <Text style={[styles.baralhoSubtext, { color: textColor }]}>
+                {baralho.cardsCount} cards | {baralho.cardsToReviewCount} para revisar
+              </Text>
+            </View>
+            
             <TouchableOpacity
-              style={[styles.deleteButton, { position: 'absolute', top: 8, right: 8, zIndex: 10, backgroundColor: 'transparent' }]}
-              onPress={() => openMenu(card.id)}
-            >
-              <MaterialCommunityIcons name="dots-vertical" size={28} color="#fff" />
-            </TouchableOpacity>
-            <Text style={[styles.cardText, { color: textColor }]}>
-              {card.pergunta}
-            </Text>
-          </View>
-        ))}
-      </ScrollView>
-
-      {/* Modal customizado para menu */}
-      <Modal
-        visible={modalVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={closeMenu}
-      >
-        <TouchableOpacity style={customMenuStyles.overlay} activeOpacity={1} onPress={closeMenu}>
-          <View style={customMenuStyles.menuBox}>
-            <MaterialCommunityIcons name="dots-vertical" size={28} color="#fff" style={{ alignSelf: 'flex-end', marginBottom: 16 }} />
-            <TouchableOpacity
-              style={customMenuStyles.menuItem}
-              onPress={() => { closeMenu(); /* ação editar */ }}
-            >
-              <Text style={customMenuStyles.menuText}>Editar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={customMenuStyles.menuItem}
-              onPress={() => { closeMenu(); handleDeleteCard(selectedCardId); }}
+              style={styles.deleteButton}
+              onPress={(e) => {
+                e.stopPropagation();
+                handleDeleteBaralho(baralho.id);
+              }}
             >
               <Text style={customMenuStyles.menuText}>Excluir</Text>
             </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
 
       <TouchableOpacity
         style={styles.fab}
-        onPress={() => navigation.navigate('CreateCard')}
+        onPress={() => navigation.navigate('CreateBaralho', { onBaralhoCreated: fetchBaralhos })}
       >
         <Text style={styles.fabText}>+</Text>
       </TouchableOpacity>

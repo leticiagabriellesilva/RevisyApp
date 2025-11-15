@@ -7,9 +7,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Baralho {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  createdAt DateTime @default(now())
+  cards     Card[]
+}
+
 model Card {
-  id          Int     @id @default(autoincrement())
-  pergunta    String
-  resposta    String
-  dificuldade Boolean @default(false)
+  id              Int         @id @default(autoincrement())
+  pergunta        String
+  resposta        String
+  dificuldade     Boolean     @default(false)
+  repeticoes      Int         @default(0)
+  intervalo       Int         @default(0) // minutos entre revisões
+  fatorFacilidade Float       @default(2.5)
+  qualidade       Int         @default(0)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  lastReview      DateTime?
+  nextReview      DateTime    @default(now())
+  baralhoId          Int
+  baralho            Baralho        @relation(fields: [baralhoId], references: [id], onDelete: Cascade)
 }

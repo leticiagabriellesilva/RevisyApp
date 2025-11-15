@@ -19,6 +19,17 @@ export default StyleSheet.create({
     alignItems: 'center',
     elevation: 4,
     position: 'relative',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  baralhoInfo: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  baralhoSubtext: {
+    fontSize: 14,
+    marginTop: 5,
+    opacity: 0.8,
   },
   cardText: {
     fontSize: 18,

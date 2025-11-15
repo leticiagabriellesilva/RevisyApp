@@ -4,7 +4,7 @@ import styles from './Style';
 import { StatusBar } from 'expo-status-bar';
 import ArrowButton from '../../components/Buttons/ArrowButton';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import Deck from '../../components/Deck/Deck';
+import Baralho from '../../components/Baralho/Baralho';
 import VerMaisButton from '../../components/Buttons/VerMaisButton';
 import EditProfileButton from '../../components/Buttons/EditProfileButton';
 
@@ -43,27 +43,27 @@ export default function ProfileScreen() {
             </View>
 
             <View style={[styles.container2]}>
-                <Text style={[styles.decksTitle, styles.ColorTheme]}>Top Baralhos</Text>
+                <Text style={[styles.baralhosTitle, styles.ColorTheme]}>Top Baralhos</Text>
 
-                <View style={styles.decksContainer}>
-                    <View style={styles.deckItem}>
-                        <Deck title="Redes de Computadores" author="MarlonRodrigues" onPress={() => { }} />
-                        <Text style={styles.deckScore}>1050/1050</Text>
+                <View style={styles.baralhosContainer}>
+                    <View style={styles.baralhoItem}>
+                        <Baralho title="Redes de Computadores" author="MarlonRodrigues" onPress={() => { }} />
+                        <Text style={styles.baralhoScore}>1050/1050</Text>
                     </View>
 
-                    <View style={styles.deckItem}>
-                        <Deck title="Banco de Dados" author="LuanSpartan" onPress={() => { }} />
-                        <Text style={styles.deckScore}>889/900</Text>
+                    <View style={styles.baralhoItem}>
+                        <Baralho title="Banco de Dados" author="LuanSpartan" onPress={() => { }} />
+                        <Text style={styles.baralhoScore}>889/900</Text>
                     </View>
 
-                    <View style={styles.deckItem}>
-                        <Deck title="Sistemas Operacionais" author="LuanSpartan" onPress={() => { }} />
-                        <Text style={styles.deckScore}>721/850</Text>
+                    <View style={styles.baralhoItem}>
+                        <Baralho title="Sistemas Operacionais" author="LuanSpartan" onPress={() => { }} />
+                        <Text style={styles.baralhoScore}>721/850</Text>
                     </View>
 
-                    <View style={styles.deckItem}>
-                        <Deck title="Estrutura de Dados" author="Leticiao" onPress={() => { }} />
-                        <Text style={styles.deckScore}>826/1050</Text>
+                    <View style={styles.baralhoItem}>
+                        <Baralho title="Estrutura de Dados" author="Leticiao" onPress={() => { }} />
+                        <Text style={styles.baralhoScore}>826/1050</Text>
                     </View>
                 </View>
 
