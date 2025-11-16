@@ -8,19 +8,27 @@ export default function TopBar({ image1, onPress1, style1, image2, onPress2, sty
   return (
     <View style={styles.conteiner}>
       <View style={styles.top} >
-        <ButtonImage
-          image={image1}
-          onPress={onPress1}
-          style={style1}
-        />
+        <View style={styles.leftContainer}>
+          <ButtonImage
+            image={image1}
+            onPress={onPress1}
+            style={style1}
+          />
+        </View>
 
-        <Text style={styles.logo}>Revisy</Text>
+        <View style={styles.centerContainer}>
+          <Text style={styles.logo}>Revisy</Text>
+        </View>
 
-        <ButtonImage
-          image={image2}
-          onPress={onPress2}
-          style={style2}
-        />
+        <View style={styles.rightContainer}>
+          {image2 && (
+            <ButtonImage
+              image={image2}
+              onPress={onPress2}
+              style={style2}
+            />
+          )}
+        </View>
       </View>
     </View>
   );
@@ -39,6 +47,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
+  },
+  leftContainer: {
+    flex: 1,
+    alignItems: 'flex-start'
+  },
+  centerContainer: {
+    flex: 1,
+    alignItems: 'center'
+  },
+  rightContainer: {
+    flex: 1,
+    alignItems: 'flex-end'
   },
   logo: {
     fontSize: 25,
