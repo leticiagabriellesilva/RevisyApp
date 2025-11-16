@@ -10,15 +10,17 @@ import {
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
-import { useNavigation } from '@react-navigation/native';
+import ArrowLeft from '../../assets/icons-menu/back-button.png';
 
 export default function CustomDrawer(props) {
-  const navigation = useNavigation();
+  const { navigation } = props;
 
   return (
-    <DrawerContentScrollView {...props} contentContainerStyle={styles.container}>
+    <DrawerContentScrollView
+      {...props}
+      contentContainerStyle={styles.container}
+    >
       <View style={styles.header}>
-
         <View style={styles.profile}>
           <Image
             source={require('../../assets/image.png')}
@@ -26,6 +28,10 @@ export default function CustomDrawer(props) {
           />
           <Text style={styles.greeting}>Olá, Baruffi!</Text>
         </View>
+
+        <TouchableOpacity onPress={() => navigation.closeDrawer()} style={styles.closeArea}>
+          <Image source={ArrowLeft} style={styles.closeIcon} />
+        </TouchableOpacity>
       </View>
 
       <DrawerItemList
@@ -44,27 +50,41 @@ const styles = StyleSheet.create({
     paddingTop: 0,
   },
   header: {
-    padding: 20,
+    padding: 18,
+    paddingTop: 35,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
+    flexDirection: 'row',       
+    alignItems: 'center',     
+  },
+  closeArea: {
+    width: 35, 
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 12,
+  },
+  closeIcon: {
+    width: 15,
+    height: 15,
+    marginLeft: 160,
+    resizeMode: "contain",
   },
   profile: {
-    marginTop: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
+    flexDirection: "row",
+    alignItems: "center",
   },
   profileImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    marginRight: 10,            
   },
   greeting: {
     fontSize: 16,
     fontWeight: 'bold',
   },
   label: {
-    marginLeft: -15,
+    marginLeft: -10,
     fontSize: 15,
   },
 });

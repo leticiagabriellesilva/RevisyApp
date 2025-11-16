@@ -52,21 +52,21 @@ export default function HomeScreen({ navigation }) {
     const confirmDelete = window.confirm('Tem certeza que deseja excluir este baralho e todos os seus cards?');
     
     if (confirmDelete) {
-      try {
-        const response = await fetch(`http://localhost:3001/baralhos/${baralhoId}`, {
-          method: 'DELETE',
-        });
+            try {
+              const response = await fetch(`http://localhost:3001/baralhos/${baralhoId}`, {
+                method: 'DELETE',
+              });
                 
-        if (response.ok) {
+              if (response.ok) {
           setBaralhos(prevBaralhos => prevBaralhos.filter(baralho => baralho.id !== baralhoId));
           window.alert('Baralho deletado com sucesso!');
-        } else {
+              } else {
           window.alert('Não foi possível excluir o baralho.');
-        }
-      } catch (err) {
+              }
+            } catch (err) {
         window.alert('Ocorreu um erro ao excluir o baralho.');
-      }
-    }
+          }
+        }
   };
 
   return (
@@ -92,7 +92,11 @@ export default function HomeScreen({ navigation }) {
               styles.card, 
               { backgroundColor: baralho.hasCardsToReview ? '#AD94DB' : '#96D289' }
             ]}
-            onPress={() => navigation.navigate('BaralhoCards', { baralhoId: baralho.id, baralhoName: baralho.nome })}
+            onPress={() => navigation.navigate('BaralhoCards', { 
+              baralhoId: baralho.id, 
+              baralhoName: baralho.nome,
+              onBaralhoUpdated: fetchBaralhos
+           })}
           >
             <View style={styles.baralhoInfo}>
               <Text style={[styles.cardText, { color: textColor }]}>
