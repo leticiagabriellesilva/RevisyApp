@@ -146,7 +146,7 @@ export default function AppEspacada({ navigation }) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fafafa' }}>
         <Text style={{ fontSize: 20, color: '#333', textAlign: 'center', paddingHorizontal: 16 }}>Não há mais cards a serem revisados.</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Home')} style={{ marginTop: 16 }}>
+        <TouchableOpacity onPress={() => navigation.navigate('Drawer')} style={{ marginTop: 16 }}>
           <Text style={{ color: '#6A5ACD' }}>Voltar para a Home</Text>
         </TouchableOpacity>
       </View>
@@ -157,7 +157,7 @@ export default function AppEspacada({ navigation }) {
     <View style={styles.container}>
       <TopBar
         image1={require('../../assets/backIcon.png')}
-        onPress1={() => navigation.navigate('Home')}
+        onPress1={() => navigation.navigate('Drawer')}
         style1={styles.image}
         image2={require('../../assets/confirmIcon.png')}
         onPress2={() => {

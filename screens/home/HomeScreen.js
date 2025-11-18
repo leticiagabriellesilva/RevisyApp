@@ -7,6 +7,7 @@ import {
   Alert,
   useColorScheme
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import TopBar from '../../components/TopBar/TopBar';
 import styles from './Style';
 
@@ -20,6 +21,12 @@ export default function HomeScreen({ navigation }) {
   useEffect(() => {
     fetchBaralhos();
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchBaralhos();
+    }, [])
+  );
 
   const fetchBaralhos = async () => {
     try {
@@ -38,13 +45,13 @@ export default function HomeScreen({ navigation }) {
         method: 'PUT',
       });
       if (response.ok) {
-        alert('Dificuldade dos cards reinicializada!');
+        window.alert('Dificuldade dos cards reinicializada!');
         fetchBaralhos(); // Atualiza a lista de baralhos
       } else {
-        alert('Erro', 'Não foi possível reinicializar as dificuldades.');
+        window.alert('Erro', 'Não foi possível reinicializar as dificuldades.');
       }
     } catch (err) {
-      alert('Erro', 'Ocorreu um erro ao reinicializar as dificuldades.');
+      window.alert('Erro', 'Ocorreu um erro ao reinicializar as dificuldades.');
     }
   };
 

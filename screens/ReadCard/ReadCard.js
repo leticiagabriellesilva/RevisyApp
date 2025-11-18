@@ -56,7 +56,7 @@ export default function App({ navigation }) {
     if (cards.length === 0 || currentIndex >= cards.length) {
       const timeout = setTimeout(() => navigation.reset({
         index: 0,
-        routes: [{ name: 'Home' }],
+        routes: [{ name: 'Drawer' }],
       }), 1000);
       return () => clearTimeout(timeout);
     }
@@ -74,10 +74,10 @@ export default function App({ navigation }) {
     <View style={styles.container}>
       <TopBar
         image1={require('../../assets/backIcon.png')}
-        onPress1={() => navigation.navigate('Home')}
+        onPress1={() => navigation.navigate('Drawer')}
         style1={styles.image}
         image2={require('../../assets/confirmIcon.png')}
-        onPress2={() => navigation.navigate('Home')}
+        onPress2={() => navigation.navigate('Drawer')}
         style2={styles.image}
       />
 
