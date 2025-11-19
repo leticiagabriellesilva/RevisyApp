@@ -6,20 +6,33 @@ import IconTextButton from '../../components/IconTextButton/IconTextButton';
 import ButtonImage from '../../components/ButtonImage/ButtonImage';
 
 //Tem que passar o baralho para entrar nessa tela.
-export default function App({ navigation }) {
+export default function App({ navigation, route }) {
+  const { baralhoId, cards: cardsProp } = route.params || {};
   const [baralho, setBaralho] = useState('Redes');
   const [cards, setCards] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [cardRef, setCardRef] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:3001/cards')
-      .then(res => res.json())
-      .then(data => {
-        setCards(data.filter(card => card.dificuldade === true || card.dificuldade === 1));
-      })
-      .catch(err => console.error('Erro ao buscar cards:', err));
-  }, []);
+    if (cardsProp && cardsProp.length > 0) {
+      setCards(cardsProp.filter(card => card.dificuldade === true || card.dificuldade === 1));
+    } else if (baralhoId) {
+      // busca cards desse baralho
+      fetch(`http://localhost:3001/cards/baralho/${baralhoId}`)
+        .then(res => res.json())
+        .then(data => {
+          setCards(data.filter(card => card.dificuldade === true || card.dificuldade === 1));
+        })
+        .catch(err => console.error('Erro ao buscar cards:', err));
+    } else {
+      fetch('http://localhost:3001/cards')
+        .then(res => res.json())
+        .then(data => {
+          setCards(data.filter(card => card.dificuldade === true || card.dificuldade === 1));
+        })
+        .catch(err => console.error('Erro ao buscar cards:', err));
+    }
+  }, [baralhoId, cardsProp]);
 
   function handleDificuldade(cardId, dificuldade) {
     fetch(`http://localhost:3001/cards/${cardId}`, {
