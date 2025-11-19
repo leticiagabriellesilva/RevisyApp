@@ -95,7 +95,7 @@ export default function BaralhoCardsScreen({ route, navigation }) {
       {cards.length > 0 && (
         <TouchableOpacity
           style={styles.reviewButton}
-          onPress={() => navigation.navigate('App', { cards })}
+          onPress={() => navigation.navigate('App', { cards, baralhoId })}
         >
           <Text style={styles.reviewButtonText}>
             Iniciar Revisão ({cards.length} cards)

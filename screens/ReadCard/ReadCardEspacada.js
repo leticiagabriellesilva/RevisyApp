@@ -7,13 +7,18 @@ import ButtonImage from '../../components/ButtonImage/ButtonImage';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 //Tem que passar o baralho para entrar nessa tela.
-export default function AppEspacada({ navigation }) {
+export default function AppEspacada({ navigation, route }) {
   const API_URL = 'http://localhost:3001';
+  const { baralhoId } = route.params || {};
   const [cards, setCards] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const carregaCardsAFazer = useCallback(() => {
-    fetch(`${API_URL}/cards`)
+    const endpoint = baralhoId 
+      ? `${API_URL}/cards/baralho/${baralhoId}/review`
+      : `${API_URL}/cards`;
+    
+    fetch(endpoint)
       .then(res => res.json())
       .then(data => {
         const now = new Date();
@@ -26,7 +31,7 @@ export default function AppEspacada({ navigation }) {
         setCards(due);
       })
       .catch(err => console.error('Erro ao buscar cards:', err));
-  }, []);
+  }, [baralhoId]);
 
   useEffect(() => {
     carregaCardsAFazer();
