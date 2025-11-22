@@ -80,9 +80,6 @@ export default function CreateCardScreen({ route, navigation }) {
         image1={require('../../assets/backIcon.png')}
         onPress1={() => navigation.goBack()}
         style1={styles.image}
-        image2={require('../../assets/confirmIcon.png')}
-        onPress2={() => navigation.goBack()}
-        style2={styles.image}
       />
         <View style={styles.content}>
 
