@@ -6,8 +6,6 @@ import CardInput from '../../components/CardInput/CardInput';
 
 export default function CreateCardScreen({ route, navigation }) {
   const { baralhoId, onCardCreated } = route.params || {};
-export default function App({ navigation }) {
-  const [baralho, setBaralho] = useState('Redes');
   const [pergunta, setPergunta] = useState('');
   const [resposta, setResposta] = useState('');
 
@@ -86,20 +84,6 @@ export default function App({ navigation }) {
         onPress2={() => navigation.goBack()}
         style2={styles.image}
       />
-      <View style={[styles.pickerRow,buttonText === 'VERSO' ? styles.pickerRowVerso : styles.pickerRowFrente]}>
-        <Text style={styles.label}>Baralho:</Text>
-        <Picker
-          selectedValue={baralho}
-          onValueChange={(itemValue) => setBaralho(itemValue)}
-          style={styles.picker}
-        >
-          <Picker.Item label="Redes" value="Redes" />
-          <Picker.Item label="Algoritmos" value="Algoritmos" />
-          <Picker.Item label="Banco de Dados" value="Banco de Dados" />
-        </Picker>
-      </View>
-
-
         <View style={styles.content}>
 
         <View style={styles.showCard}>
@@ -223,19 +207,6 @@ const styles = StyleSheet.create({
   progressionBar: {
     height: 12,
     backgroundColor: '#4C1C74'
-  },
-  pickerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginTop: 20,
-  },
-  pickerRowVerso: {
-    backgroundColor: '#AD94DB', // Verde
-  },
-  pickerRowFrente: {
-    backgroundColor: '#96D289', // Lilás
   },
   label: {
     color: '#000',

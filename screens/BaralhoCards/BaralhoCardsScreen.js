@@ -18,6 +18,8 @@ export default function BaralhoCardsScreen({ route, navigation }) {
 
   const [cards, setCards] = useState([]);
   const [cardsToReview, setCardsToReview] = useState([]);
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [selectedCardId, setSelectedCardId] = useState(null);
 
   useEffect(() => {
     fetchCards();
@@ -127,13 +129,48 @@ export default function BaralhoCardsScreen({ route, navigation }) {
             </View>
             
             <TouchableOpacity
-              style={styles.deleteButton}
-              onPress={() => handleDeleteCard(card.id)}
+              style={styles.menuButton}
+              onPress={() => { setSelectedCardId(card.id); setMenuVisible(true); }}
             >
-              <Text style={styles.deleteButtonText}>🗑️</Text>
+              <Text style={styles.menuButtonText}>⋯</Text>
             </TouchableOpacity>
           </View>
         ))}
+
+        {/* Modal do menu com opções Editar e Excluir */}
+        {menuVisible && (
+          <View style={modalStyles.overlay}>
+            <View style={modalStyles.menuBox}>
+              <TouchableOpacity
+                style={modalStyles.menuItem}
+                onPress={() => {
+                  // Placeholder para editar
+                  setMenuVisible(false);
+                  // TODO: implementar edição
+                }}
+              >
+                <Text style={modalStyles.menuText}>✏️ Editar</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={modalStyles.menuItem}
+                onPress={() => {
+                  setMenuVisible(false);
+                  if (selectedCardId) handleDeleteCard(selectedCardId);
+                }}
+              >
+                <Text style={modalStyles.menuText}>🗑️ Excluir</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[modalStyles.menuItem, { marginTop: 8 }]}
+                onPress={() => { setMenuVisible(false); setSelectedCardId(null); }}
+              >
+                <Text style={[modalStyles.menuText, { fontSize: 18 }]}>Cancelar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
       </ScrollView>
 
       <TouchableOpacity
@@ -196,6 +233,21 @@ const styles = StyleSheet.create({
   deleteButtonText: {
     fontSize: 16,
   },
+  menuButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    width: 35,
+    height: 35,
+    borderRadius: 17.5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 3,
+  },
+  menuButtonText: {
+    fontSize: 20,
+  },
   icon: {
     width: 40,
     height: 40,
@@ -232,5 +284,33 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     fontWeight: 'normal',
+  },
+});
+
+const modalStyles = StyleSheet.create({
+  overlay: {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(0,0,0,0.2)',
+  justifyContent: 'center',
+  alignItems: 'center',
+  },
+  menuBox: {
+  backgroundColor: '#AD94DB',
+  borderRadius: 24,
+  padding: 24,
+  minWidth: 220,
+  elevation: 10,
+  },
+  menuItem: {
+    marginVertical: 8,
+  },
+  menuText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });

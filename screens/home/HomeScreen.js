@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import TopBar from '../../components/TopBar/TopBar';
 import styles from './Style';
+import BaralhoCard from '../../components/BaralhoCard/BaralhoCard';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default function HomeScreen({ navigation }) {
@@ -84,15 +85,6 @@ export default function HomeScreen({ navigation }) {
     setSelectedCardId(null);
   };
 
-  const openMenu = (id) => {
-    setSelectedCardId(id);
-    setModalVisible(true);
-  };
-  const closeMenu = () => {
-    setModalVisible(false);
-    setSelectedCardId(null);
-  };
-
   return (
     <View style={styles.container}>
       <TopBar
@@ -110,33 +102,15 @@ export default function HomeScreen({ navigation }) {
 
       <ScrollView contentContainerStyle={styles.scroll}>
         {baralhos.map((baralho, index) => (
-          <TouchableOpacity
+          <BaralhoCard
             key={baralho.id ?? index}
-            style={[
-              styles.card, 
-              { backgroundColor: baralho.hasCardsToReview ? '#AD94DB' : '#96D289' }
-            ]}
-            onPress={() => navigation.navigate('BaralhoCards', { baralhoId: baralho.id, baralhoName: baralho.nome })}
-          >
-            <View style={styles.baralhoInfo}>
-              <Text style={[styles.cardText, { color: textColor }]}>
-                {baralho.nome}
-              </Text>
-              <Text style={[styles.baralhoSubtext, { color: textColor }]}>
-                {baralho.cardsCount} cards | {baralho.cardsToReviewCount} para revisar
-              </Text>
-            </View>
-            
-            <TouchableOpacity
-              style={styles.deleteButton}
-              onPress={(e) => {
-                e.stopPropagation();
-                handleDeleteBaralho(baralho.id);
-              }}
-            >
-              <Text style={customMenuStyles.menuText}>Excluir</Text>
-            </TouchableOpacity>
-          </TouchableOpacity>
+            baralho={baralho}
+            index={index}
+            styles={styles}
+            textColor={textColor}
+            onPressCard={(b) => navigation.navigate('BaralhoCards', { baralhoId: b.id, baralhoName: b.nome })}
+            onDelete={handleDeleteBaralho}
+          />
         ))}
       </ScrollView>
 
