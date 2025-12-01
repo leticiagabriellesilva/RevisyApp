@@ -4,7 +4,6 @@ import DrawerNavigator from '../screens/Drawer/DrawerNavigator';
 import CreateCard from '../screens/CreateCard/CreateCard';
 import App from '../screens/ReadCard/ReadCard.js';
 import AppEspacada from '../screens/ReadCard/ReadCardEspacada.js';
-import HomeScreen from '../screens/home/HomeScreen';
 import BaralhoCardsScreen from '../screens/BaralhoCards/BaralhoCardsScreen';
 import CreateBaralhoScreen from '../screens/CreateBaralho/CreateBaralhoScreen';
 
@@ -19,7 +18,6 @@ export default function MainNavigation() {
       <Stack.Screen name="BaralhoCards" component={BaralhoCardsScreen} />
       <Stack.Screen name="App" component={App} />
       <Stack.Screen name="AppEspacada" component={AppEspacada} />
-      <Stack.Screen name="Home" component={HomeScreen} />
     </Stack.Navigator>
   );
 }

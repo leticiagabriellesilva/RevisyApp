@@ -148,7 +148,7 @@ export default function AppEspacada({ navigation, route }) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fafafa' }}>
         <Text style={{ fontSize: 20, color: '#333', textAlign: 'center', paddingHorizontal: 16 }}>Não há mais cards a serem revisados.</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Drawer')} style={{ marginTop: 16 }}>
+        <TouchableOpacity onPress={() => navigation.navigate('Drawer', { screen: 'Baralhos' })} style={{ marginTop: 16 }}>
           <Text style={{ color: '#6A5ACD' }}>Voltar para a Home</Text>
         </TouchableOpacity>
       </View>
@@ -159,7 +159,7 @@ export default function AppEspacada({ navigation, route }) {
     <View style={styles.container}>
       <TopBar
         image1={require('../../assets/backIcon.png')}
-        onPress1={() => navigation.navigate('Drawer')}
+        onPress1={() => navigation.navigate('Drawer', { screen: 'Baralhos' })}
         style1={styles.image}
         image2={require('../../assets/confirmIcon.png')}
         onPress2={() => {
@@ -168,7 +168,7 @@ export default function AppEspacada({ navigation, route }) {
             'Você ainda não escolheu uma dificuldade para este card. Deseja sair mesmo assim?',
             [
               { text: 'Cancelar', style: 'cancel' },
-              { text: 'Sair', onPress: () => navigation.navigate('Home') },
+              { text: 'Sair', onPress: () => navigation.navigate('Drawer', { screen: 'Baralhos' }) },
             ],
             { cancelable: true }
           );

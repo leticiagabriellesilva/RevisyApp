@@ -9,13 +9,15 @@ import {
   StyleSheet,
   useColorScheme
 } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { DrawerActions } from '@react-navigation/native';
 import TopBar from '../../components/TopBar/TopBar';
 import styles from './Style';
 import BaralhoCard from '../../components/BaralhoCard/BaralhoCard';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default function HomeScreen({ navigation }) {
+  const drawerNavigation = useNavigation();
   const colorScheme = useColorScheme();
   const [darkMode, setDarkMode] = useState(colorScheme === 'dark');
   const textColor = darkMode ? '#fff' : '#000';
@@ -114,7 +116,7 @@ export default function HomeScreen({ navigation }) {
     <View style={styles.container}>
       <TopBar
         image1={require('../../assets/image.png')}
-        onPress1={() => navigation.openDrawer()}
+        onPress1={() => drawerNavigation.dispatch(DrawerActions.openDrawer())}
         style1={styles.icon}
         image2={require('../../assets/circular.png')}
         style2={styles.icon2}
