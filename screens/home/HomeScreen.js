@@ -42,45 +42,63 @@ export default function HomeScreen({ navigation }) {
       setBaralhos(data);
     } catch (err) {
       console.error(err);
-      Alert.alert('Erro', 'Não foi possível carregar os baralhos.');
+      Alert.alert('Erro', 'Não foi possível carregar os baralhos.', [{ text: 'OK' }]);
     }
   };
 
   const handleResetDificuldade = async () => {
-    try {
-      const response = await fetch('http://localhost:3001/cards/dificuldade', {
-        method: 'PUT',
-      });
-      if (response.ok) {
-        window.alert('Dificuldade dos cards reinicializada!');
-        fetchBaralhos(); // Atualiza a lista de baralhos
-      } else {
-        window.alert('Erro', 'Não foi possível reinicializar as dificuldades.');
-      }
-    } catch (err) {
-      window.alert('Erro', 'Ocorreu um erro ao reinicializar as dificuldades.');
-    }
+    Alert.alert(
+      'Confirmar',
+      'Tem certeza que deseja resetar a dificuldade de todos os cards?',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel'
+        },
+        {
+          text: 'Confirmar',
+          onPress: async () => {
+            try {
+              await fetch('http://localhost:3001/cards/dificuldade', {
+                method: 'PUT',
+              });
+              Alert.alert('Sucesso', 'Dificuldade dos cards reinicializada!', [{ text: 'OK' }]);
+              fetchBaralhos();
+            } catch (err) {
+              Alert.alert('Erro', 'Ocorreu um erro ao reinicializar as dificuldades.', [{ text: 'OK' }]);
+            }
+          }
+        }
+      ]
+    );
   };
 
   const handleDeleteBaralho = async (baralhoId) => {
-    const confirmDelete = window.confirm('Tem certeza que deseja excluir este baralho e todos os seus cards?');
-    
-    if (confirmDelete) {
+    Alert.alert(
+      'Confirmar Exclusão',
+      'Tem certeza que deseja excluir este baralho e todos os seus cards?',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel'
+        },
+        {
+          text: 'Excluir',
+          style: 'destructive',
+          onPress: async () => {
             try {
-              const response = await fetch(`http://localhost:3001/baralhos/${baralhoId}`, {
+              await fetch(`http://localhost:3001/baralhos/${baralhoId}`, {
                 method: 'DELETE',
               });
-                
-              if (response.ok) {
-          setBaralhos(prevBaralhos => prevBaralhos.filter(baralho => baralho.id !== baralhoId));
-          window.alert('Baralho deletado com sucesso!');
-              } else {
-          window.alert('Não foi possível excluir o baralho.');
-              }
+              setBaralhos(prevBaralhos => prevBaralhos.filter(baralho => baralho.id !== baralhoId));
+              Alert.alert('Sucesso', 'Baralho deletado com sucesso!', [{ text: 'OK' }]);
             } catch (err) {
-        window.alert('Ocorreu um erro ao excluir o baralho.');
+              Alert.alert('Erro', 'Ocorreu um erro ao excluir o baralho.', [{ text: 'OK' }]);
+            }
           }
         }
+      ]
+    );
   };
 
   const openMenu = (id) => {

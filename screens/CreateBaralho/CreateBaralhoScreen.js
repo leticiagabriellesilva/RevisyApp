@@ -8,7 +8,7 @@ export default function CreateBaralhoScreen({ route, navigation }) {
 
   const handleCreateBaralho = async () => {
     if (!baralhoName.trim()) {
-      Alert.alert('Erro', 'Por favor, informe o nome do baralho!');
+      Alert.alert('Erro', 'Por favor, informe o nome do baralho!', [{ text: 'OK' }]);
       return;
     }
 
@@ -20,14 +20,14 @@ export default function CreateBaralhoScreen({ route, navigation }) {
       });
 
       if (response.ok) {
-        Alert.alert('Sucesso', 'Baralho criado com sucesso!');
+        Alert.alert('Sucesso', 'Baralho criado com sucesso!', [{ text: 'OK' }]);
         if (onBaralhoCreated) {
           onBaralhoCreated();
         }
         navigation.goBack();
       } else {
         const errorData = await response.json();
-        Alert.alert('Erro', errorData.error || 'Não foi possível criar o baralho.');
+        Alert.alert('Erro', errorData.error || 'Não foi possível criar o baralho.', [{ text: 'OK' }]);
       }
     } catch (err) {
       console.log('Erro:', err);

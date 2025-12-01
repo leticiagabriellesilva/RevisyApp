@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -20,6 +20,8 @@ export default function BaralhoCardsScreen({ route, navigation }) {
   const [cardsToReview, setCardsToReview] = useState([]);
   const [menuVisible, setMenuVisible] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState(null);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0 });
+  const buttonRefs = useRef({});
 
   useEffect(() => {
     fetchCards();
@@ -37,29 +39,52 @@ export default function BaralhoCardsScreen({ route, navigation }) {
       setCardsToReview(reviewData);
     } catch (err) {
       console.error(err);
-      Alert.alert('Erro', 'Não foi possível carregar os cards.');
+      Alert.alert('Erro', 'Não foi possível carregar os cards.', [{ text: 'OK' }]);
+    }
+  };
+
+  const handleEditCard = (cardId) => {
+    const card = cards.find(c => c.id === cardId);
+    if (card) {
+      navigation.navigate('CreateCard', { 
+        baralhoId, 
+        cardToEdit: card,
+        onCardCreated: fetchCards 
+      });
     }
   };
 
   const handleDeleteCard = async (cardId) => {
-    const confirmDelete = window.confirm('Tem certeza que deseja excluir este card?');
-    
-    if (confirmDelete) {
-      try {
-        const response = await fetch(`http://localhost:3001/cards/${cardId}`, {
-          method: 'DELETE',
-        });
-                
-        if (response.ok) {
-          setCards(prevCards => prevCards.filter(card => card.id !== cardId));
-          window.alert('Card deletado com sucesso!');
-        } else {
-          window.alert('Não foi possível excluir o card.');
+    Alert.alert(
+      'Confirmar Exclusão',
+      'Tem certeza que deseja excluir este card?',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel'
+        },
+        {
+          text: 'Excluir',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const response = await fetch(`http://localhost:3001/cards/${cardId}`, {
+                method: 'DELETE',
+              });
+                      
+              if (response.ok) {
+                setCards(prevCards => prevCards.filter(card => card.id !== cardId));
+                Alert.alert('Sucesso', 'Card deletado com sucesso!', [{ text: 'OK' }]);
+              } else {
+                Alert.alert('Erro', 'Não foi possível excluir o card.', [{ text: 'OK' }]);
+              }
+            } catch (err) {
+              Alert.alert('Erro', 'Ocorreu um erro ao excluir o card.', [{ text: 'OK' }]);
+            }
+          }
         }
-      } catch (err) {
-        window.alert('Ocorreu um erro ao excluir o card.');
-      }
-    }
+      ]
+    );
   };
 
   const handleResetDificuldade = async () => {
@@ -68,13 +93,13 @@ export default function BaralhoCardsScreen({ route, navigation }) {
         method: 'PUT',
       });
       if (response.ok) {
-        alert('Dificuldade dos cards reinicializada!');
+        Alert.alert('Sucesso', 'Dificuldade dos cards reinicializada!', [{ text: 'OK' }]);
         fetchCards(); // Atualiza a lista de cards
       } else {
-        alert('Erro', 'Não foi possível reinicializar as dificuldades.');
+        Alert.alert('Erro', 'Não foi possível reinicializar as dificuldades.', [{ text: 'OK' }]);
       }
     } catch (err) {
-      alert('Erro', 'Ocorreu um erro ao reinicializar as dificuldades.');
+      Alert.alert('Erro', 'Ocorreu um erro ao reinicializar as dificuldades.', [{ text: 'OK' }]);
     }
   };
 
@@ -129,49 +154,65 @@ export default function BaralhoCardsScreen({ route, navigation }) {
             </View>
             
             <TouchableOpacity
+              ref={(ref) => buttonRefs.current[card.id] = ref}
               style={styles.menuButton}
-              onPress={() => { setSelectedCardId(card.id); setMenuVisible(true); }}
+              onPress={() => {
+                const buttonRef = buttonRefs.current[card.id];
+                if (buttonRef) {
+                  buttonRef.measure((fx, fy, width, height, px, py) => {
+                    setMenuPosition({ top: py + height + 5, right: 20 });
+                    setSelectedCardId(card.id);
+                    setMenuVisible(true);
+                  });
+                }
+              }}
             >
               <Text style={styles.menuButtonText}>⋯</Text>
             </TouchableOpacity>
           </View>
         ))}
 
-        {/* Modal do menu com opções Editar e Excluir */}
-        {menuVisible && (
-          <View style={modalStyles.overlay}>
-            <View style={modalStyles.menuBox}>
-              <TouchableOpacity
-                style={modalStyles.menuItem}
-                onPress={() => {
-                  // Placeholder para editar
-                  setMenuVisible(false);
-                  // TODO: implementar edição
-                }}
-              >
-                <Text style={modalStyles.menuText}>✏️ Editar</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={modalStyles.menuItem}
-                onPress={() => {
-                  setMenuVisible(false);
-                  if (selectedCardId) handleDeleteCard(selectedCardId);
-                }}
-              >
-                <Text style={modalStyles.menuText}>🗑️ Excluir</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[modalStyles.menuItem, { marginTop: 8 }]}
-                onPress={() => { setMenuVisible(false); setSelectedCardId(null); }}
-              >
-                <Text style={[modalStyles.menuText, { fontSize: 18 }]}>Cancelar</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
       </ScrollView>
+
+      {/* Menu com opções Editar e Excluir */}
+      {menuVisible && (
+        <TouchableOpacity 
+          style={modalStyles.backdrop}
+          activeOpacity={1}
+          onPress={() => { setMenuVisible(false); setSelectedCardId(null); }}
+        >
+          <View style={[modalStyles.menuBox, { top: menuPosition.top, right: menuPosition.right }]}>
+            <TouchableOpacity
+              style={modalStyles.menuItem}
+              onPress={() => {
+                setMenuVisible(false);
+                if (selectedCardId) handleEditCard(selectedCardId);
+              }}
+            >
+              <Text style={modalStyles.menuText}>✏️ Editar</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={modalStyles.menuItem}
+              onPress={() => {
+                setMenuVisible(false);
+                if (selectedCardId) handleDeleteCard(selectedCardId);
+              }}
+            >
+              <Text style={modalStyles.menuText}>🗑️ Excluir</Text>
+            </TouchableOpacity>
+
+            <View style={modalStyles.separator} />
+
+            <TouchableOpacity
+              style={modalStyles.menuItem}
+              onPress={() => { setMenuVisible(false); setSelectedCardId(null); }}
+            >
+              <Text style={[modalStyles.menuText, { textAlign: 'center' }]}>Cancelar</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      )}
 
       <TouchableOpacity
         style={styles.fab}
@@ -258,7 +299,7 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 80,
     right: 30,
     backgroundColor: '#96D289',
     width: 50,
@@ -266,6 +307,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   fabText: {
     fontSize: 28,
@@ -288,29 +337,37 @@ const styles = StyleSheet.create({
 });
 
 const modalStyles = StyleSheet.create({
-  overlay: {
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  backgroundColor: 'rgba(0,0,0,0.2)',
-  justifyContent: 'center',
-  alignItems: 'center',
+  backdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   menuBox: {
-  backgroundColor: '#AD94DB',
-  borderRadius: 24,
-  padding: 24,
-  minWidth: 220,
-  elevation: 10,
+    position: 'absolute',
+    backgroundColor: '#AD94DB',
+    borderRadius: 12,
+    padding: 8,
+    minWidth: 140,
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   menuItem: {
-    marginVertical: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
   },
   menuText: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
+  },
+  separator: {
+    height: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    marginVertical: 4,
   },
 });

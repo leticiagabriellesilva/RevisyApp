@@ -5,9 +5,10 @@ import TopBar from '../../components/TopBar/TopBar';
 import CardInput from '../../components/CardInput/CardInput';
 
 export default function CreateCardScreen({ route, navigation }) {
-  const { baralhoId, onCardCreated } = route.params || {};
-  const [pergunta, setPergunta] = useState('');
-  const [resposta, setResposta] = useState('');
+  const { baralhoId, onCardCreated, cardToEdit } = route.params || {};
+  const [pergunta, setPergunta] = useState(cardToEdit?.pergunta || '');
+  const [resposta, setResposta] = useState(cardToEdit?.resposta || '');
+  const isEditing = !!cardToEdit;
 
   const [cards, setCards] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -94,6 +95,8 @@ export default function CreateCardScreen({ route, navigation }) {
                   placeholder="Digite a pergunta aqui..."
                   corDeFundo={"#AD94DB"}
                   style = {styles.campoDeTexto}
+                  editable={!isFlipped}
+                  pointerEvents={!isFlipped ? "auto" : "none"}
                 />
               </Animated.View>
 
@@ -106,6 +109,8 @@ export default function CreateCardScreen({ route, navigation }) {
                   placeholder="Digite a resposta aqui..."
                   corDeFundo={"#96D289"}
                   style = {styles.campoDeTexto}
+                  editable={isFlipped}
+                  pointerEvents={isFlipped ? "auto" : "none"}
                 />
               </Animated.View>
             </View>
@@ -119,77 +124,73 @@ export default function CreateCardScreen({ route, navigation }) {
           </TouchableWithoutFeedback>
         </View>
 
-      </View>
-{/* 
-      <View style={styles.cardContainer}>
-        <Text style={styles.title}>FRENTE</Text>
-        <CardInput
-          title={"Frente"}
-          value={pergunta}
-          onChangeText={setPergunta}
-          placeholder="Digite a pergunta aqui..."
-          corDeFundo={"#AD94DB"}
-        />
-        <Text style={styles.title}>VERSO</Text>
-        <CardInput
-          title={"Verso"}
-          value={resposta}
-          onChangeText={setResposta}
-          placeholder="Digite a resposta aqui..."
-          corDeFundo={"#96D289"}
-        />
-      </View>
-*/}
-      <TouchableOpacity
+        <TouchableOpacity
         style={styles.button}
         onPress={async () => {
           if (!pergunta || !resposta) {
-            Alert.alert('Erro', 'Preencha a pergunta e a resposta!');
+            Alert.alert('Erro', 'Preencha a pergunta e a resposta!', [{ text: 'OK' }]);
             return;
           }
 
           if (!baralhoId) {
-            Alert.alert('Erro', 'Baralho não especificado!');
+            Alert.alert('Erro', 'Baralho não especificado!', [{ text: 'OK' }]);
             return;
           }
 
           try {
-            const response = await fetch('http://localhost:3001/cards/', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ 
-                pergunta, 
-                resposta, 
-                dificuldade: true,
-                baralhoId: baralhoId,
-                repeticoes: 0,
-                intervalo: 0,
-                fatorFacilidade: 2.5,
-                qualidade: 0,
-                nextReview: new Date().toISOString()
-              })
-            });
+            let response;
+            
+            if (isEditing) {
+              // Atualizar card existente
+              response = await fetch(`http://localhost:3001/cards/${cardToEdit.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                  pergunta, 
+                  resposta
+                })
+              });
+            } else {
+              // Criar novo card
+              response = await fetch('http://localhost:3001/cards/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                  pergunta, 
+                  resposta, 
+                  dificuldade: true,
+                  baralhoId: baralhoId,
+                  repeticoes: 0,
+                  intervalo: 0,
+                  fatorFacilidade: 2.5,
+                  qualidade: 0,
+                  nextReview: new Date().toISOString()
+                })
+              });
+            }
 
             if (response.ok) {
               setPergunta('');
               setResposta('');
-              Alert.alert('Sucesso', 'Card criado com sucesso!');
+              Alert.alert('Sucesso', isEditing ? 'Card atualizado com sucesso!' : 'Card criado com sucesso!', [{ text: 'OK' }]);
               if (onCardCreated) {
                 onCardCreated();
               }
               navigation.goBack();
             } else {
               const errorData = await response.json();
-              Alert.alert('Erro', errorData.error || 'Não foi possível criar o card.');
+              Alert.alert('Erro', errorData.error || `Não foi possível ${isEditing ? 'atualizar' : 'criar'} o card.`, [{ text: 'OK' }]);
             }
           } catch (err) {
             console.log('Erro:', err);
-            Alert.alert('Erro', 'Erro ao conectar com o servidor.');
+            Alert.alert('Erro', 'Erro ao conectar com o servidor.', [{ text: 'OK' }]);
           }
         }}
       >
-        <Text style={styles.buttonText}>Salvar</Text>
+        <Text style={styles.buttonText}>{isEditing ? 'Atualizar' : 'Salvar'}</Text>
       </TouchableOpacity>
+
+      </View>
     </View>
   );
 }
@@ -230,12 +231,12 @@ const styles = StyleSheet.create({
     marginVertical: 15,
   },
   button: {
-    marginTop: 20,
     alignSelf: 'center',
     backgroundColor: '#F39C6B',
     paddingHorizontal: 20,
     paddingVertical: 10,
-    borderRadius: 8
+    borderRadius: 8,
+    marginTop: 10
   },
   buttonText: {
     color: '#000',
@@ -259,9 +260,11 @@ showCard: {
   },
   front: {
     backgroundColor: '#AD94DB',
+    backfaceVisibility: 'hidden',
   },
   back: {
     backgroundColor: '#96D289',
+    backfaceVisibility: 'hidden',
   },
   card: {
     width: width - 100,
@@ -270,7 +273,6 @@ showCard: {
     justifyContent: 'center',
     borderRadius: 25,
     position: 'absolute',
-    backfaceVisibility: 'hidden',
   },
   text: {
     fontSize: 20

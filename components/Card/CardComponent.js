@@ -26,10 +26,9 @@ const CardComponent = forwardRef(({ pergunta, resposta }, ref) => {
 
   const resetFlip = () => {
     if (isFlipped) {
-      Animated.spring(flipAnimation, {
+      Animated.timing(flipAnimation, {
         toValue: 0,
-        friction: 6,
-        tension: 50,
+        duration: 300,
         useNativeDriver: true,
       }).start();
       setIsFlipped(false);
@@ -38,26 +37,25 @@ const CardComponent = forwardRef(({ pergunta, resposta }, ref) => {
 
   const flipCard = () => {
     if (isFlipped) {
-      Animated.spring(flipAnimation, {
+      Animated.timing(flipAnimation, {
         toValue: 0,
-        friction: 6,
-        tension: 40,
+        duration: 300,
         useNativeDriver: true,
       }).start();
     } else {
-      Animated.spring(flipAnimation, {
+      Animated.timing(flipAnimation, {
         toValue: 180,
-        friction: 6,
-        tension: 40,
+        duration: 300,
         useNativeDriver: true,
       }).start();
     }
     setIsFlipped(!isFlipped);
   };
 
-  // Reseta o flip quando a pergunta mudar
+  // Reseta o flip imediatamente quando a pergunta mudar
   useEffect(() => {
-    resetFlip();
+    flipAnimation.setValue(0);
+    setIsFlipped(false);
   }, [pergunta]);
 
   // Expõe o método resetFlip para o componente pai

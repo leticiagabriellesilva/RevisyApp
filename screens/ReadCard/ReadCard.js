@@ -106,7 +106,7 @@ export default function App({ navigation, route }) {
             <Text>Nível de dificuldade</Text>
             <ButtonImage
               image={require('../../assets/informacoes.png')}
-              onPress={() => Alert.alert('Nível de dificuldade', 'Isso define quanto tempo você precisa entre uma revisão e outra. Recomendado: \nDifícil - 10 minutos \nBom - 30 min \nFácil - 2 dias')}
+              onPress={() => Alert.alert('Nível de dificuldade', 'Isso define quanto tempo você precisa entre uma revisão e outra. Recomendado: \nDifícil - 10 minutos \nBom - 30 min \nFácil - 2 dias', [{ text: 'OK' }])}
               style={styles.imageInformationButtons}
             />
           </View>

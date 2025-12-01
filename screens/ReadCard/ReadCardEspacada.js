@@ -168,8 +168,9 @@ export default function AppEspacada({ navigation, route }) {
             'Você ainda não escolheu uma dificuldade para este card. Deseja sair mesmo assim?',
             [
               { text: 'Cancelar', style: 'cancel' },
-              { text: 'Sair', style: 'destructive', onPress: () => navigation.navigate('Home') },
-            ]
+              { text: 'Sair', onPress: () => navigation.navigate('Home') },
+            ],
+            { cancelable: true }
           );
         }}
         style2={styles.image}
@@ -187,7 +188,7 @@ export default function AppEspacada({ navigation, route }) {
             <Text>Nível de dificuldade</Text>
             <ButtonImage
               image={require('../../assets/informacoes.png')}
-              onPress={() => Alert.alert('Nível de dificuldade', 'Isso define quanto tempo você precisa entre uma revisão e outra:\n\n• Esqueci - Revisar novamente nesta sessão\n• Difícil - 10 minutos\n• Médio - 1 dia (primeira vez) ou 6 dias (segunda vez)\n• Fácil - 2 dias (primeira vez) ou 10 dias (segunda vez)\n\nDepois o intervalo aumenta automaticamente.')}
+              onPress={() => Alert.alert('Nível de dificuldade', 'Isso define quanto tempo você precisa entre uma revisão e outra:\n\n• Esqueci - Revisar novamente nesta sessão\n• Difícil - 10 minutos\n• Médio - 1 dia (primeira vez) ou 6 dias (segunda vez)\n• Fácil - 2 dias (primeira vez) ou 10 dias (segunda vez)\n\nDepois o intervalo aumenta automaticamente.', [{ text: 'OK' }])}
               style={styles.imageInformationButtons}
             />
           </View>
