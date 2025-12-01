@@ -11,7 +11,6 @@ export default function AppEspacada({ navigation, route }) {
   const { baralhoId } = route.params || {};
   const [cards, setCards] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isFlipped, setIsFlipped] = useState(false);
   const cardRef = useRef(null);
 
   const carregaCardsAFazer = useCallback(() => {
@@ -141,8 +140,6 @@ export default function AppEspacada({ navigation, route }) {
           setCards(prev => prev.filter(c => c.id !== current.id));
         }
         setCurrentIndex(0);
-        // Reseta o card para a frente
-        setIsFlipped(false);
       })
       .catch(err => console.error('Erro ao atualizar card:', err));
   }
@@ -269,25 +266,29 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   answerButtons: {
-    width: '100%',
+    width: '95%',
     flexDirection: 'row',
-    justifyContent: 'space-evenly'
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    gap: 8,
+    paddingHorizontal: 16,
   },
   answerButton: {
-    width: 100,
-    height: 70,
+    width: '42%',
+    maxWidth: 150,
+    height: 50,
     alignItems: 'center',
-    borderRadius: 15,
-    marginHorizontal: 20,
+    borderRadius: 10,
     justifyContent: 'center',
     backgroundColor: '#F39C6B'
   },
   answerTexts: {
-    fontSize: 18
+    fontSize: 14,
+    fontWeight: '500',
   },
   answerHint: {
-    fontSize: 12,
+    fontSize: 10,
     color: '#333',
-    marginTop: 4,
+    marginTop: 2,
   }
 });

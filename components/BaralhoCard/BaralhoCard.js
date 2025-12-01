@@ -11,6 +11,16 @@ export default function BaralhoCard({ baralho, index, onPressCard, onDelete, sty
       ]}
       onPress={() => onPressCard(baralho)}
     >
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={(e) => {
+          e.stopPropagation();
+          onDelete(baralho.id);
+        }}
+      >
+        <Text style={{ fontSize: 18 }}>🗑️</Text>
+      </TouchableOpacity>
+
       <View style={styles.baralhoInfo}>
         <Text style={[styles.cardText, { color: textColor }]}>
           {baralho.nome}
@@ -19,16 +29,6 @@ export default function BaralhoCard({ baralho, index, onPressCard, onDelete, sty
           {baralho.cardsCount} cards | {baralho.cardsToReviewCount} para revisar
         </Text>
       </View>
-
-      <TouchableOpacity
-        style={styles.deleteButton}
-        onPress={(e) => {
-          e.stopPropagation();
-          onDelete(baralho.id);
-        }}
-      >
-        <Text style={{ color: '#fff', fontSize: 16 }}>Excluir</Text>
-      </TouchableOpacity>
     </TouchableOpacity>
   );
 }

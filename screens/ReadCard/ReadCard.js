@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Dimensions, StyleSheet, Text, Alert, TouchableOpacity } from 'react-native';
 import TopBar from '../../components/TopBar/TopBar';
 import CardComponent from '../../components/Card/CardComponent';
@@ -11,7 +11,7 @@ export default function App({ navigation, route }) {
   const [baralho, setBaralho] = useState('Redes');
   const [cards, setCards] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [cardRef, setCardRef] = useState(null);
+  const cardRef = useRef(null);
 
   useEffect(() => {
     if (cardsProp && cardsProp.length > 0) {
@@ -98,7 +98,7 @@ export default function App({ navigation, route }) {
         <CardComponent 
           pergunta={cards[currentIndex]?.pergunta}
           resposta={cards[currentIndex]?.resposta}
-          ref={setCardRef}
+          ref={cardRef}
         />
 
         <View style={styles.answer}>
