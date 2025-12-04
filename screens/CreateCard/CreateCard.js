@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Animated, TouchableWithoutFeedback, Dimensions, Image } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import TopBar from '../../components/TopBar/TopBar';
 import CardInput from '../../components/CardInput/CardInput';
@@ -18,29 +18,48 @@ export default function CreateCardScreen({ route, navigation }) {
         image1={require('../../assets/backIcon.png')}
         onPress1={() => navigation.goBack()}
         style1={styles.image}
-        image2={require('../../assets/confirmIcon.png')}
-        onPress2={() => navigation.goBack()}
-        style2={styles.image}
       />
+        <View style={styles.content}>
 
-      <View style={styles.cardContainer}>
-        <Text style={styles.title}>FRENTE</Text>
-        <CardInput
-          title={"Frente"}
-          value={pergunta}
-          onChangeText={setPergunta}
-          placeholder="Digite a pergunta aqui..."
-          corDeFundo={"#AD94DB"}
-        />
-        <Text style={styles.title}>VERSO</Text>
-        <CardInput
-          title={"Verso"}
-          value={resposta}
-          onChangeText={setResposta}
-          placeholder="Digite a resposta aqui..."
-          corDeFundo={"#96D289"}
-        />
-      </View>
+        <View style={styles.showCard}>
+            <View style={styles.cardContainer}>
+              {/*PERGUNTA*/}
+              <Animated.View style={[styles.front, styles.card, flipToFrontStyle]}>
+                <CardInput
+                  title={"Frente"}
+                  value={pergunta}
+                  onChangeText={setPergunta}
+                  placeholder="Digite a pergunta aqui..."
+                  corDeFundo={"#AD94DB"}
+                  style = {styles.campoDeTexto}
+                  editable={!isFlipped}
+                  pointerEvents={!isFlipped ? "auto" : "none"}
+                />
+              </Animated.View>
+
+              {/*RESPOSTA*/}
+              <Animated.View style={[styles.back, styles.card, flipToBackStyle]}>
+                <CardInput
+                  title={"Verso"}
+                  value={resposta}
+                  onChangeText={setResposta}
+                  placeholder="Digite a resposta aqui..."
+                  corDeFundo={"#96D289"}
+                  style = {styles.campoDeTexto}
+                  editable={isFlipped}
+                  pointerEvents={isFlipped ? "auto" : "none"}
+                />
+              </Animated.View>
+            </View>
+        </View>
+        <View style={styles.FrenteVersoView}>
+          <TouchableWithoutFeedback onPress={flipCard}>
+            <View style={[styles.buttonview, buttonText === 'VERSO' ? styles.buttonVerso : styles.buttonFrente]}>
+              <Text style={styles.buttonText}>{buttonText}</Text>
+              <Image source={require('../../assets/verse.png')} style={{ width: 20, height: 20, marginLeft: 5 }} />
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
 
       <TouchableOpacity
         style={[styles.button, loading && { opacity: 0.6 }]}
@@ -52,7 +71,7 @@ export default function CreateCardScreen({ route, navigation }) {
           }
 
           if (!baralhoId) {
-            Alert.alert('Erro', 'Baralho não especificado!');
+            Alert.alert('Erro', 'Baralho não especificado!', [{ text: 'OK' }]);
             return;
           }
 
@@ -87,9 +106,13 @@ export default function CreateCardScreen({ route, navigation }) {
       >
         <Text style={styles.buttonText}>{loading ? 'Salvando...' : 'Salvar'}</Text>
       </TouchableOpacity>
+
+      </View>
     </View>
   );
 }
+
+const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
@@ -100,18 +123,21 @@ const styles = StyleSheet.create({
     height: 12,
     backgroundColor: '#4C1C74'
   },
-  pickerContainer: {
-    marginTop: 20,
-    marginHorizontal: 20,
-
-  },
   label: {
-    fontSize: 16,
-    marginBottom: 5
+    color: '#000',
+    fontSize: 14,
+    fontWeight: 'bold',
+    minWidth: 80, // largura mínima para o texto
+    marginRight: 8, // espaço entre o texto e o Picker
+    textAlignVertical: 'center',
   },
   picker: {
+    flex: 1,
+    backgroundColor: 'transparent', // para herdar o fundo da view
+    marginLeft: 0,
+    borderRadius: 8,
     height: 50,
-    backgroundColor: '#fff'
+    justifyContent: 'center',
   },
 
   title: {
@@ -122,12 +148,12 @@ const styles = StyleSheet.create({
     marginVertical: 15,
   },
   button: {
-    marginTop: 20,
     alignSelf: 'center',
     backgroundColor: '#F39C6B',
     paddingHorizontal: 20,
     paddingVertical: 10,
-    borderRadius: 8
+    borderRadius: 8,
+    marginTop: 10
   },
   buttonText: {
     color: '#000',
@@ -137,4 +163,65 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
   },
+
+showCard: {
+    alignItems: 'center',
+    marginTop: 25,
+  },
+  cardContainer: {
+    width: width - 100,
+    height: height / 3,
+  },
+  campoDeTexto: {
+    width: '100%',
+  },
+  front: {
+    backgroundColor: '#AD94DB',
+    backfaceVisibility: 'hidden',
+  },
+  back: {
+    backgroundColor: '#96D289',
+    backfaceVisibility: 'hidden',
+  },
+  card: {
+    width: width - 100,
+    height: height / 3,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 25,
+    position: 'absolute',
+  },
+  text: {
+    fontSize: 20
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'space-evenly'
+  },
+  answer: {
+    alignItems: 'center',
+    width: '100%'
+  },
+  FrenteVersoView: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  buttonview: {
+    width: 150,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    borderRadius: 25,
+    marginVertical: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  buttonVerso: {
+    backgroundColor: '#96D289', // cor para Verso
+  },
+  buttonFrente: {
+    backgroundColor: '#AD94DB', // cor para Frente
+  },
+
 });

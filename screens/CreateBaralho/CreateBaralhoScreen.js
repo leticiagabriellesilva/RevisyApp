@@ -10,7 +10,7 @@ export default function CreateBaralhoScreen({ route, navigation }) {
 
   const handleCreateBaralho = async () => {
     if (!baralhoName.trim()) {
-      Alert.alert('Erro', 'Por favor, informe o nome do baralho!');
+      Alert.alert('Erro', 'Por favor, informe o nome do baralho!', [{ text: 'OK' }]);
       return;
     }
 
@@ -36,9 +36,6 @@ export default function CreateBaralhoScreen({ route, navigation }) {
         image1={require('../../assets/backIcon.png')}
         onPress1={() => navigation.goBack()}
         style1={styles.icon}
-        image2={require('../../assets/confirmIcon.png')}
-        onPress2={handleCreateBaralho}
-        style2={styles.icon}
       />
 
       <View style={styles.content}>

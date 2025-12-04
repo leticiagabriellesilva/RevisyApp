@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { Animated, Dimensions, StyleSheet, Text, TouchableWithoutFeedback, View, Alert, TouchableOpacity } from 'react-native';
+import { Dimensions, StyleSheet, Text, View, Alert, TouchableOpacity } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import TopBar from '../../components/TopBar/TopBar';
-import IconTextButton from '../../components/IconTextButton/IconTextButton';
+import CardComponent from '../../components/Card/CardComponent';
 import ButtonImage from '../../components/ButtonImage/ButtonImage';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as CardService from '../../services/cardServiceMobile';
@@ -12,6 +12,7 @@ export default function AppEspacada({ navigation, route }) {
   const { baralhoId } = route.params || {};
   const [cards, setCards] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const cardRef = useRef(null);
 
   const carregaCardsAFazer = useCallback(async () => {
     try {
@@ -42,47 +43,6 @@ export default function AppEspacada({ navigation, route }) {
       return () => {};
     }, [carregaCardsAFazer])
   );
-
-  const [isFlipped, setIsFlipped] = useState(false);
-  const flipAnimation = useRef(new Animated.Value(0)).current
-
-  const frontInterpolate = flipAnimation.interpolate({
-    inputRange: [0, 180],
-    outputRange: ['0deg', '180deg'],
-  });
-
-  const flipToFrontStyle = {
-    transform: [{ rotateY: frontInterpolate }]
-  };
-
-
-  const backInterpolate = flipAnimation.interpolate({
-    inputRange: [0, 180],
-    outputRange: ['180deg', '360deg'],
-  });
-
-  const flipToBackStyle = {
-    transform: [{ rotateY: backInterpolate }]
-  };
-
-  const flipCard = () => {
-    if (isFlipped) {
-      Animated.spring(flipAnimation, {
-        toValue: 0,
-        friction: 8,
-        tension: 10,
-        useNativeDriver: true,
-      }).start();
-    } else {
-      Animated.spring(flipAnimation, {
-        toValue: 180,
-        friction: 8,
-        tension: 10,
-        useNativeDriver: true,
-      }).start();
-    }
-    setIsFlipped(!isFlipped);
-  };
 
   function tempoParaTexto(mins){
     if (mins < 60) return `${mins} min`;
@@ -175,14 +135,6 @@ export default function AppEspacada({ navigation, route }) {
           setCards(prev => prev.filter(c => c.id !== current.id));
         }
         setCurrentIndex(0);
-        if (isFlipped) {
-          Animated.spring(flipAnimation, {
-            toValue: 0,
-            friction: 8,
-            tension: 10,
-            useNativeDriver: true,
-          }).start(() => setIsFlipped(false));
-        }
       })
       .catch(err => console.error('Erro ao atualizar card:', err));
   }
@@ -198,10 +150,8 @@ export default function AppEspacada({ navigation, route }) {
     );
   }
 
-
   return (
     <View style={styles.container}>
-      {/* Precisa incrementar o topbar igual a tela home (Leticia) */}
       <TopBar
         image1={require('../../assets/backIcon.png')}
         onPress1={() => navigation.goBack()}
@@ -220,31 +170,19 @@ export default function AppEspacada({ navigation, route }) {
         style2={styles.image}
       />
 
-
       <View style={styles.content}>
-
-        <View style={styles.showCard}>
-          <TouchableWithoutFeedback onPress={flipCard}>
-            <View style={styles.cardContainer}>
-              {/*PERGUNTA*/}
-              <Animated.View style={[styles.front, styles.card, flipToFrontStyle]}>
-                <Text style={styles.text}>{cards[currentIndex]?.pergunta || 'Sem perguntas'}</Text>
-              </Animated.View>
-
-              {/*RESPOSTA*/}
-              <Animated.View style={[styles.back, styles.card, flipToBackStyle]}>
-                <Text style={styles.text}>{cards[currentIndex]?.resposta || 'Sem resposta'}</Text>
-              </Animated.View>
-            </View>
-          </TouchableWithoutFeedback>
-        </View>
+        <CardComponent 
+          pergunta={cards[currentIndex]?.pergunta}
+          resposta={cards[currentIndex]?.resposta}
+          ref={cardRef}
+        />
 
         <View style={styles.answer}>
           <View style={styles.informationTitle}>
             <Text>Nível de dificuldade</Text>
             <ButtonImage
               image={require('../../assets/informacoes.png')}
-              onPress={() => Alert.alert('Nível de dificuldade', 'Isso define quanto tempo você precisa entre uma revisão e outra:\n\n• Esqueci - Revisar novamente nesta sessão\n• Difícil - 10 minutos\n• Médio - 1 dia (primeira vez) ou 6 dias (segunda vez)\n• Fácil - 2 dias (primeira vez) ou 10 dias (segunda vez)\n\nDepois o intervalo aumenta automaticamente.')}
+              onPress={() => Alert.alert('Nível de dificuldade', 'Isso define quanto tempo você precisa entre uma revisão e outra:\n\n• Esqueci - Revisar novamente nesta sessão\n• Difícil - 10 minutos\n• Médio - 1 dia (primeira vez) ou 6 dias (segunda vez)\n• Fácil - 2 dias (primeira vez) ou 10 dias (segunda vez)\n\nDepois o intervalo aumenta automaticamente.', [{ text: 'OK' }])}
               style={styles.imageInformationButtons}
             />
           </View>
@@ -252,7 +190,6 @@ export default function AppEspacada({ navigation, route }) {
             <TouchableOpacity style={styles.answerButton}
               onPress={() => {
                 defineNota(1); // Esqueci
-                if (isFlipped) flipCard();
               }}
             >
               <Text style={styles.answerTexts}>Esqueci</Text>
@@ -262,9 +199,7 @@ export default function AppEspacada({ navigation, route }) {
             <TouchableOpacity style={styles.answerButton}
               onPress={() => {
                 defineNota(2); // Difícil
-                if (isFlipped) flipCard();
-              }
-              }
+              }}
             >
               <Text style={styles.answerTexts}>Difícil</Text>
               <Text style={styles.answerHint}>{calculaProximaData(2)}</Text>
@@ -273,17 +208,15 @@ export default function AppEspacada({ navigation, route }) {
             <TouchableOpacity style={styles.answerButton}
               onPress={() => {
                 defineNota(3); // Médio
-                if (isFlipped) flipCard();
               }}
             >
               <Text style={styles.answerTexts}>Médio</Text>
               <Text style={styles.answerHint}>{calculaProximaData(3)}</Text>
             </TouchableOpacity>
 
-              <TouchableOpacity style={styles.answerButton}
+            <TouchableOpacity style={styles.answerButton}
               onPress={() => {
                 defineNota(5); // Fácil
-                if (isFlipped) flipCard();
               }}
             >
               <Text style={styles.answerTexts}>Fácil</Text>
@@ -291,7 +224,6 @@ export default function AppEspacada({ navigation, route }) {
             </TouchableOpacity>
           </View>
         </View>
-
       </View>
     </View>
   );
@@ -307,32 +239,6 @@ const styles = StyleSheet.create({
   image: {
     width: 50,
     height: 50,
-  },
-  showCard: {
-    alignItems: 'center',
-    marginTop: 25,
-  },
-  cardContainer: {
-    width: width - 50,
-    height: height / 3,
-  },
-  front: {
-    backgroundColor: '#E2C2FB',
-  },
-  back: {
-    backgroundColor: '#96D289',
-  },
-  card: {
-    width: width - 50,
-    height: height / 3,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 10,
-    position: 'absolute',
-    backfaceVisibility: 'hidden',
-  },
-  text: {
-    fontSize: 20
   },
   content: {
     flex: 1,
@@ -355,25 +261,29 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   answerButtons: {
-    width: '100%',
+    width: '95%',
     flexDirection: 'row',
-    justifyContent: 'space-evenly'
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    gap: 8,
+    paddingHorizontal: 16,
   },
   answerButton: {
-    width: 100,
-    height: 70,
+    width: '42%',
+    maxWidth: 150,
+    height: 50,
     alignItems: 'center',
-    borderRadius: 15,
-    marginHorizontal: 20,
+    borderRadius: 10,
     justifyContent: 'center',
     backgroundColor: '#F39C6B'
   },
   answerTexts: {
-    fontSize: 18
+    fontSize: 14,
+    fontWeight: '500',
   },
   answerHint: {
-    fontSize: 12,
+    fontSize: 10,
     color: '#333',
-    marginTop: 4,
+    marginTop: 2,
   }
 });

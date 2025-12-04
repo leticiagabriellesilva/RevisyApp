@@ -1,21 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import {View,Text,TouchableOpacity,ScrollView,Alert,useColorScheme} from 'react-native';
+import {View,Text,TouchableOpacity,ScrollView,Alert,useColorScheme,Modal,StyleSheet} from 'react-native';
 import { useFocusEffect, DrawerActions } from '@react-navigation/native';
 import TopBar from '../../components/TopBar/TopBar';
 import styles from './Style';
 import * as BaralhoService from '../../services/baralhoServiceMobile';
 import * as CardService from '../../services/cardServiceMobile';
 
+import BaralhoCard from '../../components/BaralhoCard/BaralhoCard';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 export default function HomeScreen({ navigation }) {
+  const drawerNavigation = useNavigation();
   const colorScheme = useColorScheme();
   const [darkMode, setDarkMode] = useState(colorScheme === 'dark');
   const textColor = darkMode ? '#fff' : '#000';
 
   const [baralhos, setBaralhos] = useState([]);
+  const [cards, setCards] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedCardId, setSelectedCardId] = useState(null);
 
   useEffect(() => {
     fetchBaralhos();
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchBaralhos();
+    }, [])
+  );
 
   useFocusEffect(
     React.useCallback(() => {
@@ -29,7 +42,7 @@ export default function HomeScreen({ navigation }) {
       setBaralhos(data);
     } catch (err) {
       console.error(err);
-      Alert.alert('Erro', 'Não foi possível carregar os baralhos.');
+      Alert.alert('Erro', 'Não foi possível carregar os baralhos.', [{ text: 'OK' }]);
     }
   };
 
@@ -66,6 +79,15 @@ export default function HomeScreen({ navigation }) {
     );
   };
 
+  const openMenu = (id) => {
+    setSelectedCardId(id);
+    setModalVisible(true);
+  };
+  const closeMenu = () => {
+    setModalVisible(false);
+    setSelectedCardId(null);
+  };
+
   return (
     <View style={styles.container}>
       <TopBar
@@ -83,33 +105,15 @@ export default function HomeScreen({ navigation }) {
 
       <ScrollView contentContainerStyle={styles.scroll}>
         {baralhos.map((baralho, index) => (
-          <TouchableOpacity
+          <BaralhoCard
             key={baralho.id ?? index}
-            style={[
-              styles.card, 
-              { backgroundColor: baralho.hasCardsToReview ? '#AD94DB' : '#96D289' }
-            ]}
-            onPress={() => navigation.navigate('BaralhoCards', { baralhoId: baralho.id, baralhoName: baralho.nome })}
-          >
-            <View style={styles.baralhoInfo}>
-              <Text style={[styles.cardText, { color: textColor }]}>
-                {baralho.nome}
-              </Text>
-              <Text style={[styles.baralhoSubtext, { color: textColor }]}>
-                {baralho.cardsCount} cards | {baralho.cardsToReviewCount} para revisar
-              </Text>
-            </View>
-            
-            <TouchableOpacity
-              style={styles.deleteButton}
-              onPress={(e) => {
-                e.stopPropagation();
-                handleDeleteBaralho(baralho.id);
-              }}
-            >
-              <Text style={styles.deleteButtonText}>🗑️</Text>
-            </TouchableOpacity>
-          </TouchableOpacity>
+            baralho={baralho}
+            index={index}
+            styles={styles}
+            textColor={textColor}
+            onPressCard={(b) => navigation.navigate('BaralhoCards', { baralhoId: b.id, baralhoName: b.nome })}
+            onDelete={handleDeleteBaralho}
+          />
         ))}
       </ScrollView>
 
@@ -122,3 +126,31 @@ export default function HomeScreen({ navigation }) {
     </View>
   );
 }
+
+const customMenuStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  menuBox: {
+    backgroundColor: '#AD94DB',
+    borderRadius: 24,
+    padding: 32,
+    minWidth: 200,
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+  },
+  menuItem: {
+    marginVertical: 12,
+  },
+  menuText: {
+    color: '#fff',
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+});

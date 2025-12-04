@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -20,6 +20,10 @@ export default function BaralhoCardsScreen({ route, navigation }) {
 
   const [cards, setCards] = useState([]);
   const [cardsToReview, setCardsToReview] = useState([]);
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [selectedCardId, setSelectedCardId] = useState(null);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0 });
+  const buttonRefs = useRef({});
 
   useEffect(() => {
     fetchCards();
@@ -40,7 +44,18 @@ export default function BaralhoCardsScreen({ route, navigation }) {
       setCardsToReview(reviewData);
     } catch (err) {
       console.error(err);
-      Alert.alert('Erro', 'Não foi possível carregar os cards.');
+      Alert.alert('Erro', 'Não foi possível carregar os cards.', [{ text: 'OK' }]);
+    }
+  };
+
+  const handleEditCard = (cardId) => {
+    const card = cards.find(c => c.id === cardId);
+    if (card) {
+      navigation.navigate('CreateCard', { 
+        baralhoId, 
+        cardToEdit: card,
+        onCardCreated: fetchCards 
+      });
     }
   };
 
@@ -129,14 +144,65 @@ export default function BaralhoCardsScreen({ route, navigation }) {
             </View>
             
             <TouchableOpacity
-              style={styles.deleteButton}
-              onPress={() => handleDeleteCard(card.id)}
+              ref={(ref) => buttonRefs.current[card.id] = ref}
+              style={styles.menuButton}
+              onPress={() => {
+                const buttonRef = buttonRefs.current[card.id];
+                if (buttonRef) {
+                  buttonRef.measure((fx, fy, width, height, px, py) => {
+                    setMenuPosition({ top: py + height + 5, right: 20 });
+                    setSelectedCardId(card.id);
+                    setMenuVisible(true);
+                  });
+                }
+              }}
             >
-              <Text style={styles.deleteButtonText}>🗑️</Text>
+              <Text style={styles.menuButtonText}>⋯</Text>
             </TouchableOpacity>
           </View>
         ))}
+
       </ScrollView>
+
+      {/* Menu com opções Editar e Excluir */}
+      {menuVisible && (
+        <TouchableOpacity 
+          style={modalStyles.backdrop}
+          activeOpacity={1}
+          onPress={() => { setMenuVisible(false); setSelectedCardId(null); }}
+        >
+          <View style={[modalStyles.menuBox, { top: menuPosition.top, right: menuPosition.right }]}>
+            <TouchableOpacity
+              style={modalStyles.menuItem}
+              onPress={() => {
+                setMenuVisible(false);
+                if (selectedCardId) handleEditCard(selectedCardId);
+              }}
+            >
+              <Text style={modalStyles.menuText}>✏️ Editar</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={modalStyles.menuItem}
+              onPress={() => {
+                setMenuVisible(false);
+                if (selectedCardId) handleDeleteCard(selectedCardId);
+              }}
+            >
+              <Text style={modalStyles.menuText}>🗑️ Excluir</Text>
+            </TouchableOpacity>
+
+            <View style={modalStyles.separator} />
+
+            <TouchableOpacity
+              style={modalStyles.menuItem}
+              onPress={() => { setMenuVisible(false); setSelectedCardId(null); }}
+            >
+              <Text style={[modalStyles.menuText, { textAlign: 'center' }]}>Cancelar</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      )}
 
       <TouchableOpacity
         style={styles.fab}
@@ -198,6 +264,21 @@ const styles = StyleSheet.create({
   deleteButtonText: {
     fontSize: 16,
   },
+  menuButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    width: 35,
+    height: 35,
+    borderRadius: 17.5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 3,
+  },
+  menuButtonText: {
+    fontSize: 20,
+  },
   icon: {
     width: 40,
     height: 40,
@@ -208,7 +289,7 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 80,
     right: 30,
     backgroundColor: '#96D289',
     width: 50,
@@ -216,6 +297,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   fabText: {
     fontSize: 28,
@@ -234,5 +323,41 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     fontWeight: 'normal',
+  },
+});
+
+const modalStyles = StyleSheet.create({
+  backdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  menuBox: {
+    position: 'absolute',
+    backgroundColor: '#AD94DB',
+    borderRadius: 12,
+    padding: 8,
+    minWidth: 140,
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  menuItem: {
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+  },
+  menuText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  separator: {
+    height: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    marginVertical: 4,
   },
 });
