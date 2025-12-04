@@ -3,11 +3,13 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import TopBar from '../../components/TopBar/TopBar';
 import CardInput from '../../components/CardInput/CardInput';
+import * as CardService from '../../services/cardServiceMobile';
 
 export default function CreateCardScreen({ route, navigation }) {
   const { baralhoId, onCardCreated } = route.params || {};
   const [pergunta, setPergunta] = useState('');
   const [resposta, setResposta] = useState('');
+  const [loading, setLoading] = useState(false);
 
 
   return (
@@ -41,9 +43,10 @@ export default function CreateCardScreen({ route, navigation }) {
       </View>
 
       <TouchableOpacity
-        style={styles.button}
+        style={[styles.button, loading && { opacity: 0.6 }]}
+        disabled={loading}
         onPress={async () => {
-          if (!pergunta || !resposta) {
+          if (!pergunta.trim() || !resposta.trim()) {
             Alert.alert('Erro', 'Preencha a pergunta e a resposta!');
             return;
           }
@@ -53,42 +56,36 @@ export default function CreateCardScreen({ route, navigation }) {
             return;
           }
 
+          setLoading(true);
           try {
-            const response = await fetch('http://localhost:3001/cards/', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ 
-                pergunta, 
-                resposta, 
-                dificuldade: true,
-                baralhoId: baralhoId,
-                repeticoes: 0,
-                intervalo: 0,
-                fatorFacilidade: 2.5,
-                qualidade: 0,
-                nextReview: new Date().toISOString()
-              })
+            await CardService.createCard({
+              pergunta: pergunta.trim(),
+              resposta: resposta.trim(),
+              dificuldade: true,
+              baralhoId: baralhoId,
+              repeticoes: 0,
+              intervalo: 0,
+              fatorFacilidade: 2.5,
+              qualidade: 0,
+              nextReview: new Date().toISOString(),
             });
 
-            if (response.ok) {
-              setPergunta('');
-              setResposta('');
-              Alert.alert('Sucesso', 'Card criado com sucesso!');
-              if (onCardCreated) {
-                onCardCreated();
-              }
-              navigation.goBack();
-            } else {
-              const errorData = await response.json();
-              Alert.alert('Erro', errorData.error || 'Não foi possível criar o card.');
+            setPergunta('');
+            setResposta('');
+            Alert.alert('Sucesso', 'Card criado com sucesso!');
+            if (onCardCreated) {
+              onCardCreated();
             }
+            navigation.goBack();
           } catch (err) {
             console.log('Erro:', err);
-            Alert.alert('Erro', 'Erro ao conectar com o servidor.');
+            Alert.alert('Erro', err.message || 'Não foi possível criar o card.');
+          } finally {
+            setLoading(false);
           }
         }}
       >
-        <Text style={styles.buttonText}>Salvar</Text>
+        <Text style={styles.buttonText}>{loading ? 'Salvando...' : 'Salvar'}</Text>
       </TouchableOpacity>
     </View>
   );

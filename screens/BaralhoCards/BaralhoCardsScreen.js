@@ -7,8 +7,10 @@ import {
   Alert,
   useColorScheme
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import TopBar from '../../components/TopBar/TopBar';
 import { StyleSheet } from 'react-native';
+import * as CardService from '../../services/cardServiceMobile';
 
 export default function BaralhoCardsScreen({ route, navigation }) {
   const { baralhoId, baralhoName } = route.params;
@@ -23,15 +25,18 @@ export default function BaralhoCardsScreen({ route, navigation }) {
     fetchCards();
   }, [baralhoId]);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchCards();
+    }, [baralhoId])
+  );
+
   const fetchCards = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/cards/baralho/${baralhoId}`);
-      const data = await response.json();
+      const data = await CardService.getCardsByBaralhoId(baralhoId);
       setCards(data);
 
-      // Buscar cards para revisão
-      const reviewResponse = await fetch(`http://localhost:3001/cards/baralho/${baralhoId}/review`);
-      const reviewData = await reviewResponse.json();
+      const reviewData = await CardService.getCardsToReviewByBaralhoId(baralhoId);
       setCardsToReview(reviewData);
     } catch (err) {
       console.error(err);
@@ -40,39 +45,36 @@ export default function BaralhoCardsScreen({ route, navigation }) {
   };
 
   const handleDeleteCard = async (cardId) => {
-    const confirmDelete = window.confirm('Tem certeza que deseja excluir este card?');
-    
-    if (confirmDelete) {
-      try {
-        const response = await fetch(`http://localhost:3001/cards/${cardId}`, {
-          method: 'DELETE',
-        });
-                
-        if (response.ok) {
-          setCards(prevCards => prevCards.filter(card => card.id !== cardId));
-          window.alert('Card deletado com sucesso!');
-        } else {
-          window.alert('Não foi possível excluir o card.');
-        }
-      } catch (err) {
-        window.alert('Ocorreu um erro ao excluir o card.');
-      }
-    }
+    Alert.alert(
+      'Confirmar Exclusão',
+      'Tem certeza que deseja excluir este card?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Excluir',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await CardService.deleteCardById(cardId);
+              setCards(prevCards => prevCards.filter(card => card.id !== cardId));
+              setCardsToReview(prevCards => prevCards.filter(card => card.id !== cardId));
+              Alert.alert('Sucesso', 'Card deletado com sucesso!');
+            } catch (err) {
+              Alert.alert('Erro', 'Não foi possível excluir o card.');
+            }
+          },
+        },
+      ]
+    );
   };
 
   const handleResetDificuldade = async () => {
     try {
-      const response = await fetch('http://localhost:3001/cards/dificuldade', {
-        method: 'PUT',
-      });
-      if (response.ok) {
-        alert('Dificuldade dos cards reinicializada!');
-        fetchCards(); // Atualiza a lista de cards
-      } else {
-        alert('Erro', 'Não foi possível reinicializar as dificuldades.');
-      }
+      await CardService.updateAllCardsDifficulty();
+      Alert.alert('Sucesso', 'Dificuldade dos cards reinicializada!');
+      fetchCards();
     } catch (err) {
-      alert('Erro', 'Ocorreu um erro ao reinicializar as dificuldades.');
+      Alert.alert('Erro', 'Ocorreu um erro ao reinicializar as dificuldades.');
     }
   };
 
@@ -98,7 +100,7 @@ export default function BaralhoCardsScreen({ route, navigation }) {
           onPress={() => navigation.navigate('App', { cards, baralhoId })}
         >
           <Text style={styles.reviewButtonText}>
-            Iniciar Revisão ({cards.length} cards)
+            Iniciar Revisão Rápida ({cards.length} cards)
           </Text>
         </TouchableOpacity>
       )}

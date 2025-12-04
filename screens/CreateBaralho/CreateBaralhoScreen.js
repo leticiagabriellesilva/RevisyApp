@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import TopBar from '../../components/TopBar/TopBar';
+import * as BaralhoService from '../../services/baralhoServiceMobile';
 
 export default function CreateBaralhoScreen({ route, navigation }) {
   const [baralhoName, setBaralhoName] = useState('');
+  const [loading, setLoading] = useState(false);
   const { onBaralhoCreated } = route.params || {};
 
   const handleCreateBaralho = async () => {
@@ -12,26 +14,19 @@ export default function CreateBaralhoScreen({ route, navigation }) {
       return;
     }
 
+    setLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/baralhos/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome: baralhoName })
-      });
-
-      if (response.ok) {
-        Alert.alert('Sucesso', 'Baralho criado com sucesso!');
-        if (onBaralhoCreated) {
-          onBaralhoCreated();
-        }
-        navigation.goBack();
-      } else {
-        const errorData = await response.json();
-        Alert.alert('Erro', errorData.error || 'Não foi possível criar o baralho.');
+      await BaralhoService.createBaralho({ nome: baralhoName.trim() });
+      Alert.alert('Sucesso', 'Baralho criado com sucesso!');
+      if (onBaralhoCreated) {
+        onBaralhoCreated();
       }
+      navigation.goBack();
     } catch (err) {
       console.log('Erro:', err);
-      Alert.alert('Erro', 'Erro ao conectar com o servidor.');
+      Alert.alert('Erro', err.message || 'Não foi possível criar o baralho.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -61,10 +56,11 @@ export default function CreateBaralhoScreen({ route, navigation }) {
         </View>
 
         <TouchableOpacity
-          style={styles.button}
+          style={[styles.button, loading && { opacity: 0.6 }]}
+          disabled={loading}
           onPress={handleCreateBaralho}
         >
-          <Text style={styles.buttonText}>Criar Baralho</Text>
+          <Text style={styles.buttonText}>{loading ? 'Criando...' : 'Criar Baralho'}</Text>
         </TouchableOpacity>
       </View>
     </View>

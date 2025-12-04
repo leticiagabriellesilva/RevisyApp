@@ -4,6 +4,7 @@ import TopBar from '../../components/TopBar/TopBar';
 import IconTextButton from '../../components/IconTextButton/IconTextButton';
 import ButtonImage from '../../components/ButtonImage/ButtonImage';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import * as CardService from '../../services/cardServiceMobile';
 
 //Tem que passar o baralho para entrar nessa tela.
 export default function App({ navigation, route }) {
@@ -15,24 +16,24 @@ export default function App({ navigation, route }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    if (cardsProp && cardsProp.length > 0) {
-      setCards(cardsProp.filter(card => card.dificuldade === true || card.dificuldade === 1));
-    } else if (baralhoId) {
-      // busca cards desse baralho
-      fetch(`http://localhost:3001/cards/baralho/${baralhoId}`)
-        .then(res => res.json())
-        .then(data => {
-          setCards(data.filter(card => card.dificuldade === true || card.dificuldade === 1));
-        })
-        .catch(err => console.error('Erro ao buscar cards:', err));
-    } else {
-      fetch('http://localhost:3001/cards')
-        .then(res => res.json())
-        .then(data => {
-          setCards(data.filter(card => card.dificuldade === true || card.dificuldade === 1));
-        })
-        .catch(err => console.error('Erro ao buscar cards:', err));
-    }
+    const loadCards = async () => {
+      try {
+        let data;
+        if (cardsProp && cardsProp.length > 0) {
+          data = cardsProp.filter(card => card.dificuldade === true || card.dificuldade === 1);
+        } else if (baralhoId) {
+          const allCards = await CardService.getCardsByBaralhoId(baralhoId);
+          data = allCards.filter(card => card.dificuldade === true || card.dificuldade === 1);
+        } else {
+          const allCards = await CardService.getAllCards();
+          data = allCards.filter(card => card.dificuldade === true || card.dificuldade === 1);
+        }
+        setCards(data);
+      } catch (err) {
+        console.error('Erro ao buscar cards:', err);
+      }
+    };
+    loadCards();
   }, [baralhoId, cardsProp]);
 
   const [isFlipped, setIsFlipped] = useState(false);
@@ -80,13 +81,8 @@ export default function App({ navigation, route }) {
   };
 
   function handleDificuldade(cardId, dificuldade) {
-    fetch(`http://localhost:3001/cards/${cardId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ dificuldade })
-    })
-      .then(res => res.json())
-      .then(data => {
+    CardService.updateCardById(cardId, { dificuldade })
+      .then(() => {
         setCards(prevCards => {
           let updatedCards = prevCards.map(card =>
             card.id === cardId ? { ...card, dificuldade: !!dificuldade } : card
@@ -134,10 +130,10 @@ export default function App({ navigation, route }) {
       {/* Precisa incrementar o topbar igual a tela home (Leticia) */}
       <TopBar
         image1={require('../../assets/backIcon.png')}
-        onPress1={() => navigation.navigate('Home')}
+        onPress1={() => navigation.goBack()}
         style1={styles.image}
         image2={require('../../assets/confirmIcon.png')}
-        onPress2={() => navigation.navigate('Home')}
+        onPress2={() => navigation.goBack()}
         style2={styles.image}
       />
 

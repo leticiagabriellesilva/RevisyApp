@@ -5,32 +5,31 @@ import TopBar from '../../components/TopBar/TopBar';
 import IconTextButton from '../../components/IconTextButton/IconTextButton';
 import ButtonImage from '../../components/ButtonImage/ButtonImage';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import * as CardService from '../../services/cardServiceMobile';
 
 //Tem que passar o baralho para entrar nessa tela.
 export default function AppEspacada({ navigation, route }) {
-  const API_URL = 'http://localhost:3001';
   const { baralhoId } = route.params || {};
   const [cards, setCards] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const carregaCardsAFazer = useCallback(() => {
-    const endpoint = baralhoId 
-      ? `${API_URL}/cards/baralho/${baralhoId}/review`
-      : `${API_URL}/cards`;
-    
-    fetch(endpoint)
-      .then(res => res.json())
-      .then(data => {
-        const now = new Date();
-        const due = data.filter(card => {
-          // Cartas sem nextReview são consideradas como vencidas
+  const carregaCardsAFazer = useCallback(async () => {
+    try {
+      let data;
+      if (baralhoId) {
+        data = await CardService.getCardsToReviewByBaralhoId(baralhoId);
+      } else {
+        const allCards = await CardService.getAllCards();
+        const now = new Date().toISOString();
+        data = allCards.filter(card => {
           if (!card.nextReview) return true;
-          const next = new Date(card.nextReview);
-          return next <= now;
+          return card.nextReview <= now;
         });
-        setCards(due);
-      })
-      .catch(err => console.error('Erro ao buscar cards:', err));
+      }
+      setCards(data);
+    } catch (err) {
+      console.error('Erro ao buscar cards:', err);
+    }
   }, [baralhoId]);
 
   useEffect(() => {
@@ -155,12 +154,7 @@ export default function AppEspacada({ navigation, route }) {
       nextReview: next ? next.toISOString() : null,
     };
 
-    fetch(`${API_URL}/cards/${current.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
-      .then(res => res.json())
+    CardService.updateCardById(current.id, payload)
       .then(() => {
         if (quality === 1) {
           // Esqueci: mantém na mesma sessão e move pro final
@@ -197,8 +191,8 @@ export default function AppEspacada({ navigation, route }) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fafafa' }}>
         <Text style={{ fontSize: 20, color: '#333', textAlign: 'center', paddingHorizontal: 16 }}>Não há mais cards a serem revisados.</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Home')} style={{ marginTop: 16 }}>
-          <Text style={{ color: '#6A5ACD' }}>Voltar para a Home</Text>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginTop: 16 }}>
+          <Text style={{ color: '#6A5ACD' }}>Voltar</Text>
         </TouchableOpacity>
       </View>
     );
@@ -210,7 +204,7 @@ export default function AppEspacada({ navigation, route }) {
       {/* Precisa incrementar o topbar igual a tela home (Leticia) */}
       <TopBar
         image1={require('../../assets/backIcon.png')}
-        onPress1={() => navigation.navigate('Home')}
+        onPress1={() => navigation.goBack()}
         style1={styles.image}
         image2={require('../../assets/confirmIcon.png')}
         onPress2={() => {
@@ -219,7 +213,7 @@ export default function AppEspacada({ navigation, route }) {
             'Você ainda não escolheu uma dificuldade para este card. Deseja sair mesmo assim?',
             [
               { text: 'Cancelar', style: 'cancel' },
-              { text: 'Sair', style: 'destructive', onPress: () => navigation.navigate('Home') },
+              { text: 'Sair', style: 'destructive', onPress: () => navigation.goBack() },
             ]
           );
         }}

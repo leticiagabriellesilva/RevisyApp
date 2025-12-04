@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import styles from './Style';
 import { StatusBar } from 'expo-status-bar';
 import ArrowButton from '../../components/Buttons/ArrowButton';
@@ -9,12 +10,14 @@ import VerMaisButton from '../../components/Buttons/VerMaisButton';
 import EditProfileButton from '../../components/Buttons/EditProfileButton';
 
 export default function ProfileScreen() {
+    const navigation = useNavigation();
+    
     return (
         <View style={styles.container}>
             <StatusBar style="light" />
 
             <View style={[styles.header, styles.BackgroundTheme]}>
-                <ArrowButton style={styles.arrowButton} onPress={() => navigation.navigate('Home')} />
+                <ArrowButton style={styles.arrowButton} onPress={() => navigation.navigate('Cards')} />
 
                 <Image source={require('../../images/baruffi.jpg')} style={styles.profileImage} />
 

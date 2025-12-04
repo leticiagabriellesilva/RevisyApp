@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  Alert,
-  useColorScheme
-} from 'react-native';
+import {View,Text,TouchableOpacity,ScrollView,Alert,useColorScheme} from 'react-native';
+import { useFocusEffect, DrawerActions } from '@react-navigation/native';
 import TopBar from '../../components/TopBar/TopBar';
 import styles from './Style';
+import * as BaralhoService from '../../services/baralhoServiceMobile';
+import * as CardService from '../../services/cardServiceMobile';
 
 export default function HomeScreen({ navigation }) {
   const colorScheme = useColorScheme();
@@ -21,10 +17,15 @@ export default function HomeScreen({ navigation }) {
     fetchBaralhos();
   }, []);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchBaralhos();
+    }, [])
+  );
+
   const fetchBaralhos = async () => {
     try {
-      const response = await fetch('http://localhost:3001/baralhos/status');
-      const data = await response.json();
+      const data = await BaralhoService.getBaralhosWithReviewStatus();
       setBaralhos(data);
     } catch (err) {
       console.error(err);
@@ -34,46 +35,42 @@ export default function HomeScreen({ navigation }) {
 
   const handleResetDificuldade = async () => {
     try {
-      const response = await fetch('http://localhost:3001/cards/dificuldade', {
-        method: 'PUT',
-      });
-      if (response.ok) {
-        alert('Dificuldade dos cards reinicializada!');
-        fetchBaralhos(); // Atualiza a lista de baralhos
-      } else {
-        alert('Erro', 'Não foi possível reinicializar as dificuldades.');
-      }
+      await CardService.updateAllCardsDifficulty();
+      Alert.alert('Sucesso', 'Dificuldade dos cards reinicializada!');
+      fetchBaralhos();
     } catch (err) {
-      alert('Erro', 'Ocorreu um erro ao reinicializar as dificuldades.');
+      Alert.alert('Erro', 'Ocorreu um erro ao reinicializar as dificuldades.');
     }
   };
 
   const handleDeleteBaralho = async (baralhoId) => {
-    const confirmDelete = window.confirm('Tem certeza que deseja excluir este baralho e todos os seus cards?');
-    
-    if (confirmDelete) {
-      try {
-        const response = await fetch(`http://localhost:3001/baralhos/${baralhoId}`, {
-          method: 'DELETE',
-        });
-                
-        if (response.ok) {
-          setBaralhos(prevBaralhos => prevBaralhos.filter(baralho => baralho.id !== baralhoId));
-          window.alert('Baralho deletado com sucesso!');
-        } else {
-          window.alert('Não foi possível excluir o baralho.');
-        }
-      } catch (err) {
-        window.alert('Ocorreu um erro ao excluir o baralho.');
-      }
-    }
+    Alert.alert(
+      'Confirmar Exclusão',
+      'Tem certeza que deseja excluir este baralho e todos os seus cards?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Excluir',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await BaralhoService.deleteBaralhoById(baralhoId);
+              setBaralhos(prevBaralhos => prevBaralhos.filter(baralho => baralho.id !== baralhoId));
+              Alert.alert('Sucesso', 'Baralho deletado com sucesso!');
+            } catch (err) {
+              Alert.alert('Erro', 'Não foi possível excluir o baralho.');
+            }
+          },
+        },
+      ]
+    );
   };
 
   return (
     <View style={styles.container}>
       <TopBar
         image1={require('../../assets/image.png')}
-        onPress1={() => navigation.openDrawer()}
+        onPress1={() => navigation.dispatch(DrawerActions.openDrawer())}
         style1={styles.icon}
         image2={require('../../assets/circular.png')}
         style2={styles.icon2}
