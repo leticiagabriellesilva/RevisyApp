@@ -9,6 +9,8 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Baralho from '../../components/Baralho/Baralho';
 import VerMaisButton from '../../components/Buttons/VerMaisButton';
 import EditProfileButton from '../../components/Buttons/EditProfileButton';
+import * as BaralhoService from '../../services/baralhoServiceMobile';
+import * as CardService from '../../services/cardServiceMobile';
 
 export default function ProfileScreen({ navigation }) {
     const [baralhos, setBaralhos] = useState([]);
@@ -18,15 +20,13 @@ export default function ProfileScreen({ navigation }) {
         try {
             setLoading(true);
             
-            // Buscar baralhos
-            const baralhosResponse = await fetch('http://localhost:3001/baralhos/');
-            const baralhosData = await baralhosResponse.json();
+            // Buscar baralhos do SQLite
+            const baralhosData = await BaralhoService.getAllBaralhos();
             
-            // Buscar a quantidade de cards
+            // Buscar a quantidade de cards de cada baralho
             const baralhosComCards = await Promise.all(
                 baralhosData.map(async (baralho) => {
-                    const cardsResponse = await fetch(`http://localhost:3001/cards/baralho/${baralho.id}`);
-                    const cardsData = await cardsResponse.json();
+                    const cardsData = await CardService.getCardsByBaralhoId(baralho.id);
                     
                     return {
                         id: baralho.id,
@@ -61,7 +61,7 @@ export default function ProfileScreen({ navigation }) {
             <StatusBar style="light" />
 
             <View style={[styles.header, styles.BackgroundTheme]}>
-                <ArrowButton style={styles.arrowButton} onPress={() => navigation.navigate('Cards')} />
+                <ArrowButton style={styles.arrowButton} onPress={() => navigation.navigate('Baralhos')} />
 
                 <Image source={require('../../images/baruffi.jpg')} style={styles.profileImage} />
 

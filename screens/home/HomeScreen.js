@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {View,Text,TouchableOpacity,ScrollView,Alert,useColorScheme,Modal,StyleSheet} from 'react-native';
-import { useFocusEffect, DrawerActions } from '@react-navigation/native';
+import { useFocusEffect, DrawerActions, useNavigation } from '@react-navigation/native';
 import TopBar from '../../components/TopBar/TopBar';
 import styles from './Style';
 import * as BaralhoService from '../../services/baralhoServiceMobile';

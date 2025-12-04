@@ -6,10 +6,57 @@ import CardInput from '../../components/CardInput/CardInput';
 import * as CardService from '../../services/cardServiceMobile';
 
 export default function CreateCardScreen({ route, navigation }) {
-  const { baralhoId, onCardCreated } = route.params || {};
-  const [pergunta, setPergunta] = useState('');
-  const [resposta, setResposta] = useState('');
+  const { baralhoId, onCardCreated, cardToEdit } = route.params || {};
+  const [pergunta, setPergunta] = useState(cardToEdit?.pergunta || '');
+  const [resposta, setResposta] = useState(cardToEdit?.resposta || '');
   const [loading, setLoading] = useState(false);
+  const isEditing = !!cardToEdit;
+
+  const [isFlipped, setIsFlipped] = useState(false);
+  const flipAnimation = useRef(new Animated.Value(0)).current;
+  const [buttonText, setButtonText] = useState('VERSO');
+
+  const frontInterpolate = flipAnimation.interpolate({
+    inputRange: [0, 180],
+    outputRange: ['0deg', '180deg'],
+  });
+
+  const flipToFrontStyle = {
+    transform: [{ rotateY: frontInterpolate }]
+  };
+
+  const backInterpolate = flipAnimation.interpolate({
+    inputRange: [0, 180],
+    outputRange: ['180deg', '360deg'],
+  });
+
+  const flipToBackStyle = {
+    transform: [{ rotateY: backInterpolate }]
+  };
+
+  const flipCard = () => {
+    if (isFlipped) {
+      Animated.spring(flipAnimation, {
+        toValue: 0,
+        friction: 8,
+        tension: 10,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.spring(flipAnimation, {
+        toValue: 180,
+        friction: 8,
+        tension: 10,
+        useNativeDriver: true,
+      }).start();
+    }
+    if (isFlipped) {
+      setButtonText('VERSO');
+    } else {
+      setButtonText('FRENTE');
+    }
+    setIsFlipped(!isFlipped);
+  };
 
 
   return (
@@ -24,7 +71,7 @@ export default function CreateCardScreen({ route, navigation }) {
         <View style={styles.showCard}>
             <View style={styles.cardContainer}>
               {/*PERGUNTA*/}
-              <Animated.View style={[styles.front, styles.card, flipToFrontStyle]}>
+              <Animated.View style={[styles.front, styles.card, flipToFrontStyle, { pointerEvents: !isFlipped ? "auto" : "none" }]}>
                 <CardInput
                   title={"Frente"}
                   value={pergunta}
@@ -32,13 +79,11 @@ export default function CreateCardScreen({ route, navigation }) {
                   placeholder="Digite a pergunta aqui..."
                   corDeFundo={"#AD94DB"}
                   style = {styles.campoDeTexto}
-                  editable={!isFlipped}
-                  pointerEvents={!isFlipped ? "auto" : "none"}
                 />
               </Animated.View>
 
               {/*RESPOSTA*/}
-              <Animated.View style={[styles.back, styles.card, flipToBackStyle]}>
+              <Animated.View style={[styles.back, styles.card, flipToBackStyle, { pointerEvents: isFlipped ? "auto" : "none" }]}>
                 <CardInput
                   title={"Verso"}
                   value={resposta}
@@ -46,8 +91,6 @@ export default function CreateCardScreen({ route, navigation }) {
                   placeholder="Digite a resposta aqui..."
                   corDeFundo={"#96D289"}
                   style = {styles.campoDeTexto}
-                  editable={isFlipped}
-                  pointerEvents={isFlipped ? "auto" : "none"}
                 />
               </Animated.View>
             </View>
@@ -77,34 +120,44 @@ export default function CreateCardScreen({ route, navigation }) {
 
           setLoading(true);
           try {
-            await CardService.createCard({
-              pergunta: pergunta.trim(),
-              resposta: resposta.trim(),
-              dificuldade: true,
-              baralhoId: baralhoId,
-              repeticoes: 0,
-              intervalo: 0,
-              fatorFacilidade: 2.5,
-              qualidade: 0,
-              nextReview: new Date().toISOString(),
-            });
+            if (isEditing) {
+              // Atualizar card existente
+              await CardService.updateCardById(cardToEdit.id, {
+                pergunta: pergunta.trim(),
+                resposta: resposta.trim(),
+              });
+              Alert.alert('Sucesso', 'Card atualizado com sucesso!');
+            } else {
+              // Criar novo card
+              await CardService.createCard({
+                pergunta: pergunta.trim(),
+                resposta: resposta.trim(),
+                dificuldade: true,
+                baralhoId: baralhoId,
+                repeticoes: 0,
+                intervalo: 0,
+                fatorFacilidade: 2.5,
+                qualidade: 0,
+                nextReview: new Date().toISOString(),
+              });
+              Alert.alert('Sucesso', 'Card criado com sucesso!');
+            }
 
             setPergunta('');
             setResposta('');
-            Alert.alert('Sucesso', 'Card criado com sucesso!');
             if (onCardCreated) {
               onCardCreated();
             }
             navigation.goBack();
           } catch (err) {
             console.log('Erro:', err);
-            Alert.alert('Erro', err.message || 'Não foi possível criar o card.');
+            Alert.alert('Erro', err.message || `Não foi possível ${isEditing ? 'atualizar' : 'criar'} o card.`);
           } finally {
             setLoading(false);
           }
         }}
       >
-        <Text style={styles.buttonText}>{loading ? 'Salvando...' : 'Salvar'}</Text>
+        <Text style={styles.buttonText}>{loading ? (isEditing ? 'Atualizando...' : 'Salvando...') : (isEditing ? 'Atualizar' : 'Salvar')}</Text>
       </TouchableOpacity>
 
       </View>
@@ -127,13 +180,13 @@ const styles = StyleSheet.create({
     color: '#000',
     fontSize: 14,
     fontWeight: 'bold',
-    minWidth: 80, // largura mínima para o texto
-    marginRight: 8, // espaço entre o texto e o Picker
+    minWidth: 80,
+    marginRight: 8,
     textAlignVertical: 'center',
   },
   picker: {
     flex: 1,
-    backgroundColor: 'transparent', // para herdar o fundo da view
+    backgroundColor: 'transparent',
     marginLeft: 0,
     borderRadius: 8,
     height: 50,
@@ -218,10 +271,10 @@ showCard: {
     paddingVertical: 10,
   },
   buttonVerso: {
-    backgroundColor: '#96D289', // cor para Verso
+    backgroundColor: '#96D289',
   },
   buttonFrente: {
-    backgroundColor: '#AD94DB', // cor para Frente
+    backgroundColor: '#AD94DB',
   },
 
 });
