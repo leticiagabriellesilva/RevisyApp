@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {View,Text,TouchableOpacity,ScrollView,Alert,useColorScheme,Modal,StyleSheet} from 'react-native';
+import {View,Text,TouchableOpacity,ScrollView,Alert,useColorScheme,StyleSheet} from 'react-native';
 import { useFocusEffect, DrawerActions, useNavigation } from '@react-navigation/native';
 import TopBar from '../../components/TopBar/TopBar';
 import styles from './Style';
@@ -7,7 +7,6 @@ import * as BaralhoService from '../../services/baralhoServiceMobile';
 import * as CardService from '../../services/cardServiceMobile';
 
 import BaralhoCard from '../../components/BaralhoCard/BaralhoCard';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default function HomeScreen({ navigation }) {
   const drawerNavigation = useNavigation();
@@ -17,8 +16,8 @@ export default function HomeScreen({ navigation }) {
 
   const [baralhos, setBaralhos] = useState([]);
   const [cards, setCards] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedCardId, setSelectedCardId] = useState(null);
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [selectedBaralhoId, setSelectedBaralhoId] = useState(null);
 
   useEffect(() => {
     fetchBaralhos();
@@ -80,12 +79,22 @@ export default function HomeScreen({ navigation }) {
   };
 
   const openMenu = (id) => {
-    setSelectedCardId(id);
-    setModalVisible(true);
+    setSelectedBaralhoId(id);
+    setMenuVisible(true);
   };
   const closeMenu = () => {
-    setModalVisible(false);
-    setSelectedCardId(null);
+    setMenuVisible(false);
+    setSelectedBaralhoId(null);
+  };
+
+  const handleEditBaralho = (baralhoId) => {
+    const baralho = baralhos.find(b => b.id === baralhoId);
+    if (baralho) {
+      navigation.navigate('CreateBaralho', { 
+        baralhoToEdit: baralho,
+        onBaralhoCreated: fetchBaralhos 
+      });
+    }
   };
 
   return (
@@ -112,10 +121,49 @@ export default function HomeScreen({ navigation }) {
             styles={styles}
             textColor={textColor}
             onPressCard={(b) => navigation.navigate('BaralhoCards', { baralhoId: b.id, baralhoName: b.nome })}
-            onDelete={handleDeleteBaralho}
+            onOpenMenu={openMenu}
           />
         ))}
       </ScrollView>
+
+      {menuVisible && (
+        <TouchableOpacity 
+          style={modalStyles.backdrop}
+          activeOpacity={1}
+          onPress={closeMenu}
+        >
+          <View style={modalStyles.menuBox}>
+            <TouchableOpacity
+              style={modalStyles.menuItem}
+              onPress={() => {
+                closeMenu();
+                if (selectedBaralhoId) handleEditBaralho(selectedBaralhoId);
+              }}
+            >
+              <Text style={modalStyles.menuText}>✏️ Editar</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={modalStyles.menuItem}
+              onPress={() => {
+                closeMenu();
+                if (selectedBaralhoId) handleDeleteBaralho(selectedBaralhoId);
+              }}
+            >
+              <Text style={modalStyles.menuText}>🗑️ Excluir</Text>
+            </TouchableOpacity>
+
+            <View style={modalStyles.separator} />
+
+            <TouchableOpacity
+              style={modalStyles.menuItem}
+              onPress={closeMenu}
+            >
+              <Text style={[modalStyles.menuText, { textAlign: 'center' }]}>Cancelar</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      )}
 
       <TouchableOpacity
         style={styles.fab}
@@ -127,30 +175,40 @@ export default function HomeScreen({ navigation }) {
   );
 }
 
-const customMenuStyles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
+const modalStyles = StyleSheet.create({
+  backdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   menuBox: {
+    position: 'absolute',
+    top: 60,
+    right: 20,
     backgroundColor: '#AD94DB',
-    borderRadius: 24,
-    padding: 32,
-    minWidth: 200,
+    borderRadius: 12,
+    padding: 8,
+    minWidth: 140,
     elevation: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   menuItem: {
-    marginVertical: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
   },
   menuText: {
     color: '#fff',
-    fontSize: 22,
+    fontSize: 16,
     fontWeight: 'bold',
+  },
+  separator: {
+    height: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    marginVertical: 4,
   },
 });

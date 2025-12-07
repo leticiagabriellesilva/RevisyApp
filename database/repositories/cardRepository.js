@@ -108,6 +108,14 @@ module.exports = {
     return await module.exports.getAllCards();
   },
 
+  updateCardsDifficultyByBaralhoId: async (baralhoId) => {
+    await executeRun(
+      'UPDATE Card SET dificuldade = 1, updatedAt = ? WHERE baralhoId = ?',
+      [new Date().toISOString(), parseInt(baralhoId)]
+    );
+    return await module.exports.getCardsByBaralhoId(baralhoId);
+  },
+
   deleteCardById: async (id) => {
     const card = await module.exports.getCardById(id);
     if (!card) {

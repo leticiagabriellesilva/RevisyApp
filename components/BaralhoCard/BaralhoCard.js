@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-export default function BaralhoCard({ baralho, index, onPressCard, onDelete, styles, textColor }) {
+export default function BaralhoCard({ baralho, index, onPressCard, onOpenMenu, styles, textColor }) {
   return (
     <TouchableOpacity
       key={baralho.id ?? index}
@@ -15,10 +16,10 @@ export default function BaralhoCard({ baralho, index, onPressCard, onDelete, sty
         style={styles.deleteButton}
         onPress={(e) => {
           e.stopPropagation();
-          onDelete(baralho.id);
+          onOpenMenu(baralho.id);
         }}
       >
-        <Text style={{ fontSize: 18 }}>🗑️</Text>
+        <MaterialCommunityIcons name="dots-vertical" size={24} color={textColor} />
       </TouchableOpacity>
 
       <View style={styles.baralhoInfo}>

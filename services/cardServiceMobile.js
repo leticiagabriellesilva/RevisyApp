@@ -31,6 +31,11 @@ export const updateAllCardsDifficulty = async () => {
   return await cardRepository.updateAllCardsDifficulty();
 };
 
+export const updateCardsDifficultyByBaralhoId = async (baralhoId) => {
+  if (!baralhoId) throw new Error('ID do baralho não informado.');
+  return await cardRepository.updateCardsDifficultyByBaralhoId(baralhoId);
+};
+
 export const deleteCardById = async (id) => {
   if (!id) throw new Error('ID do card não informado.');
   return await cardRepository.deleteCardById(id);

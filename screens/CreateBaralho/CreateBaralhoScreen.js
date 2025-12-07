@@ -4,9 +4,11 @@ import TopBar from '../../components/TopBar/TopBar';
 import * as BaralhoService from '../../services/baralhoServiceMobile';
 
 export default function CreateBaralhoScreen({ route, navigation }) {
-  const [baralhoName, setBaralhoName] = useState('');
+  const { onBaralhoCreated, baralhoToEdit } = route.params || {};
+  const isEditing = !!baralhoToEdit;
+  
+  const [baralhoName, setBaralhoName] = useState(baralhoToEdit?.nome || '');
   const [loading, setLoading] = useState(false);
-  const { onBaralhoCreated } = route.params || {};
 
   const handleCreateBaralho = async () => {
     if (!baralhoName.trim()) {
@@ -16,15 +18,20 @@ export default function CreateBaralhoScreen({ route, navigation }) {
 
     setLoading(true);
     try {
-      await BaralhoService.createBaralho({ nome: baralhoName.trim() });
-      Alert.alert('Sucesso', 'Baralho criado com sucesso!');
+      if (isEditing) {
+        await BaralhoService.updateBaralhoById(baralhoToEdit.id, { nome: baralhoName.trim() });
+        Alert.alert('Sucesso', 'Baralho atualizado com sucesso!');
+      } else {
+        await BaralhoService.createBaralho({ nome: baralhoName.trim() });
+        Alert.alert('Sucesso', 'Baralho criado com sucesso!');
+      }
       if (onBaralhoCreated) {
         onBaralhoCreated();
       }
       navigation.goBack();
     } catch (err) {
       console.log('Erro:', err);
-      Alert.alert('Erro', err.message || 'Não foi possível criar o baralho.');
+      Alert.alert('Erro', err.message || `Não foi possível ${isEditing ? 'atualizar' : 'criar'} o baralho.`);
     } finally {
       setLoading(false);
     }
@@ -39,7 +46,7 @@ export default function CreateBaralhoScreen({ route, navigation }) {
       />
 
       <View style={styles.content}>
-        <Text style={styles.title}>Criar Novo Baralho</Text>
+        <Text style={styles.title}>{isEditing ? 'Editar Baralho' : 'Criar Novo Baralho'}</Text>
         
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Nome do Baralho</Text>
@@ -57,7 +64,9 @@ export default function CreateBaralhoScreen({ route, navigation }) {
           disabled={loading}
           onPress={handleCreateBaralho}
         >
-          <Text style={styles.buttonText}>{loading ? 'Criando...' : 'Criar Baralho'}</Text>
+          <Text style={styles.buttonText}>
+            {loading ? (isEditing ? 'Atualizando...' : 'Criando...') : (isEditing ? 'Atualizar Baralho' : 'Criar Baralho')}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>

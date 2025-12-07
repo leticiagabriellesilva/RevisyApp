@@ -85,8 +85,8 @@ export default function BaralhoCardsScreen({ route, navigation }) {
 
   const handleResetDificuldade = async () => {
     try {
-      await CardService.updateAllCardsDifficulty();
-      Alert.alert('Sucesso', 'Dificuldade dos cards reinicializada!');
+      await CardService.updateCardsDifficultyByBaralhoId(baralhoId);
+      Alert.alert('Sucesso', 'Dificuldade dos cards deste baralho foi reinicializada!');
       fetchCards();
     } catch (err) {
       Alert.alert('Erro', 'Ocorreu um erro ao reinicializar as dificuldades.');
