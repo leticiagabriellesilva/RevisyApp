@@ -1,12 +1,13 @@
 # Revisy
 
+<img width="140" height="119" alt="image" src="https://github.com/user-attachments/assets/786e4c54-07a5-4511-9b13-b228649cad8a" />
+
 ## Descrição do projeto:
 
 Aplicativo mobile de estudos baseado em flashcards e na metodologia da repetição espaçada, com o intuito de auxiliar estudantes na retenção de conteúdos e melhoria do desempenho acadêmico.
 
 ### Requisitos:
 - Visual Studio Code (IDE recomendada)
-- Node.js versão 18 ou superior (recomendado)
 - npm versão 9 ou superior (recomendado)
 
 ## Instalação do projeto:
@@ -17,40 +18,20 @@ Aplicativo mobile de estudos baseado em flashcards e na metodologia da repetiç�
    cd RevisyApp
    ```
 
-2. **Troque para a branch develop:**
-   ```bash
-   git checkout develop
-   ```
+2. **Abra o projeto na IDE**
 
-3. **Faça o pull da branch develop:**
-   ```bash
-   git pull origin develop
-   ```
-   
-4. **Abra o projeto na IDE**
-
-5. **Abra o primeiro terminal e escreva:**
+3. **Abra o terminal e escreva:**
    ```bash
    npm install
    ```
 
-6. **Abra o segundo terminal e escreva:**
-  ```bash
-   cd .\backend\
-   npx prisma migrate dev --name init
-   node index.js
-   ```
-- Após isso, uma mensagem que o servidor está funcionando deve aparecer:
-  
-![image](https://github.com/user-attachments/assets/0b5c17dc-e062-40ae-a1aa-8fff0fe0c305)
-
-
-7. **Volte no primeiro terminal e execute o projeto**
-  ```bash
+4. **Execute o projeto com o comando:**
+   ```bash
    npx expo start
-  ```
-
-8. **Desenvolvedores e colaboradores**
+   ```
+ <br>
+ 
+**Desenvolvedores e colaboradores**
 
 Front-end: 
 - Leticia Gabrielle Alves da Silva
