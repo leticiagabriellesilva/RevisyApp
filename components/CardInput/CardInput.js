@@ -1,31 +1,33 @@
 import React from 'react';
-import { View, StyleSheet, TextInput } from 'react-native';
-import Style from "./Style"
-function CardInput({ value, onChangeText, placeholder, corDeFundo }) {
+import { TextInput, StyleSheet } from 'react-native';
+
+function CardInput({ value, onChangeText, placeholder, corDeFundo, style, editable = true }) {
   return (
-    <View style={Style.cardInputContainer}>
-      <TextInput style={[styles.input, { backgroundColor: corDeFundo }]}
-        multiline
-        value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-      />
-    </View>
+    <TextInput
+      style={[styles.input, { backgroundColor: corDeFundo }, style]}
+      multiline
+      value={value}
+      onChangeText={onChangeText}
+      placeholder={placeholder}
+      editable={editable}
+      textAlign="center"
+      textAlignVertical="center"
+      pointerEvents={editable ? "auto" : "none"}
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  cardInputContainer: {
-    marginVertical: 0,
-    alignItems: 'center',
-  },
   input: {
-    width: '90%',
-    height: 100,
+    width: '100%',
+    height: '100%',
     padding: 15,
     backgroundColor: '#D3D3D3',
     borderRadius: 25,
+    textAlign: 'center',
+    textAlignVertical: 'center',
     alignContent: 'center',
+    justifyContent: 'center',
   },
 });
 

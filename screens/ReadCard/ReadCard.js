@@ -1,79 +1,44 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { Animated, Dimensions, StyleSheet, Text, TouchableWithoutFeedback, View, Alert, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Dimensions, StyleSheet, Text, Alert, TouchableOpacity } from 'react-native';
 import TopBar from '../../components/TopBar/TopBar';
+import CardComponent from '../../components/Card/CardComponent';
 import IconTextButton from '../../components/IconTextButton/IconTextButton';
 import ButtonImage from '../../components/ButtonImage/ButtonImage';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import * as CardService from '../../services/cardServiceMobile';
 
 //Tem que passar o baralho para entrar nessa tela.
-export default function App({ navigation }) {
+export default function App({ navigation, route }) {
+  const { baralhoId, cards: cardsProp } = route.params || {};
   const [baralho, setBaralho] = useState('Redes');
-  const [pergunta, setPergunta] = useState('');
-  const [resposta, setResposta] = useState('');
   const [cards, setCards] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const cardRef = useRef(null);
 
   useEffect(() => {
-    fetch('http://localhost:3001/cards')
-      .then(res => res.json())
-      .then(data => {
-        setCards(data.filter(card => card.dificuldade === true || card.dificuldade === 1));
-      })
-      .catch(err => console.error('Erro ao buscar cards:', err));
-  }, []);
-
-  const [isFlipped, setIsFlipped] = useState(false);
-  const flipAnimation = useRef(new Animated.Value(0)).current
-
-  const frontInterpolate = flipAnimation.interpolate({
-    inputRange: [0, 180],
-    outputRange: ['0deg', '180deg'],
-  });
-
-  const flipToFrontStyle = {
-    transform: [{ rotateY: frontInterpolate }]
-  };
-
-
-  const backInterpolate = flipAnimation.interpolate({
-    inputRange: [0, 180],
-    outputRange: ['180deg', '360deg'],
-  });
-
-  const flipToBackStyle = {
-    transform: [{ rotateY: backInterpolate }]
-  };
-
-
-  const flipCard = () => {
-    if (isFlipped) {
-
-      Animated.spring(flipAnimation, {
-        toValue: 0,
-        friction: 8,
-        tension: 10,
-        useNativeDriver: true,
-      }).start();
-    } else {
-
-      Animated.spring(flipAnimation, {
-        toValue: 180,
-        friction: 8,
-        tension: 10,
-        useNativeDriver: true,
-      }).start();
-    }
-    setIsFlipped(!isFlipped);
-  };
+    const loadCards = async () => {
+      try {
+        let data;
+        if (cardsProp && cardsProp.length > 0) {
+          data = cardsProp.filter(card => card.dificuldade === true || card.dificuldade === 1);
+        } else if (baralhoId) {
+          const allCards = await CardService.getCardsByBaralhoId(baralhoId);
+          data = allCards.filter(card => card.dificuldade === true || card.dificuldade === 1);
+        } else {
+          const allCards = await CardService.getAllCards();
+          data = allCards.filter(card => card.dificuldade === true || card.dificuldade === 1);
+        }
+        setCards(data);
+      } catch (err) {
+        console.error('Erro ao buscar cards:', err);
+      }
+    };
+    loadCards();
+  }, [baralhoId, cardsProp]);
 
   function handleDificuldade(cardId, dificuldade) {
-    fetch(`http://localhost:3001/cards/${cardId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ dificuldade })
-    })
-      .then(res => res.json())
-      .then(data => {
+    CardService.updateCardById(cardId, { dificuldade })
+      .then(() => {
         setCards(prevCards => {
           let updatedCards = prevCards.map(card =>
             card.id === cardId ? { ...card, dificuldade: !!dificuldade } : card
@@ -101,7 +66,7 @@ export default function App({ navigation }) {
     if (cards.length === 0 || currentIndex >= cards.length) {
       const timeout = setTimeout(() => navigation.reset({
         index: 0,
-        routes: [{ name: 'Home' }],
+        routes: [{ name: 'Drawer' }],
       }), 1000);
       return () => clearTimeout(timeout);
     }
@@ -115,44 +80,30 @@ export default function App({ navigation }) {
     );
   }
 
-
   return (
     <View style={styles.container}>
-      {/* Precisa incrementar o topbar igual a tela home (Leticia) */}
       <TopBar
         image1={require('../../assets/backIcon.png')}
-        onPress1={() => navigation.navigate('Home')}
+        onPress1={() => navigation.goBack()}
         style1={styles.image}
         image2={require('../../assets/confirmIcon.png')}
-        onPress2={() => navigation.navigate('Home')}
+        onPress2={() => navigation.goBack()}
         style2={styles.image}
       />
 
-
       <View style={styles.content}>
-
-        <View style={styles.showCard}>
-          <TouchableWithoutFeedback onPress={flipCard}>
-            <View style={styles.cardContainer}>
-              {/*PERGUNTA*/}
-              <Animated.View style={[styles.front, styles.card, flipToFrontStyle]}>
-                <Text style={styles.text}>{cards[currentIndex]?.pergunta || 'Sem perguntas'}</Text>
-              </Animated.View>
-
-              {/*RESPOSTA*/}
-              <Animated.View style={[styles.back, styles.card, flipToBackStyle]}>
-                <Text style={styles.text}>{cards[currentIndex]?.resposta || 'Sem resposta'}</Text>
-              </Animated.View>
-            </View>
-          </TouchableWithoutFeedback>
-        </View>
+        <CardComponent 
+          pergunta={cards[currentIndex]?.pergunta}
+          resposta={cards[currentIndex]?.resposta}
+          ref={cardRef}
+        />
 
         <View style={styles.answer}>
           <View style={styles.informationTitle}>
             <Text>Nível de dificuldade</Text>
             <ButtonImage
               image={require('../../assets/informacoes.png')}
-              onPress={() => Alert.alert('Nível de dificuldade', 'Isso define quanto tempo você precisa entre uma revisão e outra. Recomendado: \nDifícil - 10 minutos \nBom - 30 min \nFácil - 2 dias')}
+              onPress={() => Alert.alert('Nível de dificuldade', 'Isso define quanto tempo você precisa entre uma revisão e outra. Recomendado: \nDifícil - 10 minutos \nBom - 30 min \nFácil - 2 dias', [{ text: 'OK' }])}
               style={styles.imageInformationButtons}
             />
           </View>
@@ -160,7 +111,6 @@ export default function App({ navigation }) {
             <TouchableOpacity style={styles.answerButton}
               onPress={() => {
                 handleDificuldade(cards[currentIndex].id, 1);
-                if (isFlipped) flipCard();
               }}
             >
               <Text style={styles.answerTexts}>Difícil</Text>
@@ -169,19 +119,13 @@ export default function App({ navigation }) {
             <TouchableOpacity style={styles.answerButton}
               onPress={() => {
                 handleDificuldade(cards[currentIndex].id, 0);
-                if (isFlipped) flipCard();
-              }
-              }
+              }}
             >
               <Text style={styles.answerTexts}>Fácil</Text>
             </TouchableOpacity>
           </View>
         </View>
-
       </View>
-
-
-
     </View>
   );
 }
@@ -197,28 +141,12 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
   },
-  showCard: {
-    alignItems: 'center',
-    marginTop: 25,
-  },
-  cardContainer: {
-    width: width - 50,
-    height: height / 3,
-  },
-  front: {
-    backgroundColor: '#E2C2FB',
-  },
-  back: {
-    backgroundColor: '#96D289',
-  },
   card: {
     width: width - 50,
     height: height / 3,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 10,
-    position: 'absolute',
-    backfaceVisibility: 'hidden',
   },
   text: {
     fontSize: 20
@@ -261,3 +189,4 @@ const styles = StyleSheet.create({
     fontSize: 18
   }
 });
+
